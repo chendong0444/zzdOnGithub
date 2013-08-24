@@ -125,9 +125,9 @@
                         
                        <%-- <a href="javascript:tiaozhuan1('shouye','PartnerInfo.aspx','12')">
                             商家信息</a>&nbsp;|&nbsp;<a href="javascript:tiaozhuan1('shouye','ChangePWD.aspx','12')">修改密码</a>&nbsp;|&nbsp;退款审核<a href="javascript:tiaozhuan3('shouye','Index_Index.aspx','15')"><font
-                            color="red">(<%=viewcount%>)</font></a> &nbsp;|&nbsp;--%>[<a id="biz-verify-coupon-id"
-                                href="javascript:tiaozhuan('shouye','Index_Index.aspx','12')"><%=system.couponname %>验证消费</a>&nbsp;|&nbsp;<a
-                                    href="loginout.aspx" target="_top">退出</a>]
+                            color="red">(<%=viewcount%>)</font></a> &nbsp;|&nbsp;--%>
+                            [<%--<a id="biz-verify-coupon-id" href="javascript:tiaozhuan('shouye','Index_Index.aspx','12')"><%=system.couponname %>验证消费</a>&nbsp;|&nbsp;--%>
+                            <a href="loginout.aspx" target="_top">退出</a>]
                     </div>
                     <div class="username">商家后台：<%=partner.Title %></div>
                 </div>
