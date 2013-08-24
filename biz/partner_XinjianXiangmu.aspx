@@ -923,6 +923,13 @@
         team.time_state = 0;
         //添加颜色或者尺寸
         string productid = "0";
+        if (string.IsNullOrEmpty(ddlProduct.Value))
+        {
+            SetError("产品为空！请先填写产品。如果不填写产品，无法新建项目。");
+            Response.Redirect("partner_XinjianXiangmu.aspx");
+            Response.End();
+        }
+        
         if (ddlProduct.Value != "" && ddlProduct.Value != null && ddlProduct.Value != "-----")
         {
             IProduct iproduct = null;
