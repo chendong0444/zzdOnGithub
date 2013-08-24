@@ -102,17 +102,15 @@
             <div class="menu" id="menu2">
                 <ul>
                     <li id="logo"><a target="_blank" class="link" href="/index.aspx"><img width="160" src="<%=ASSystemArr["headlogo"] %>"/></a></li>
-                    <li id="dh1" class="dangqian"><a href="javascript:tiaozhuan2('shouye','Index_Index.aspx','1')">
-                        首页</a></li>
+                    <li id="dh1" class="dangqian"><a href="javascript:tiaozhuan2('shouye','Index_Index.aspx','1')">首页</a></li>
+                    <li id="dh4"><a href="javascript:tiaozhuan2('chanpin','ProductList.aspx','4')">产品</a></li>
                     <li id="dh2"><a href="javascript:tiaozhuan2('project','partner_index.aspx','2')">项目</a></li>
                     <li id="dh3"><a href="javascript:tiaozhuan2('orders','OrderList.aspx','3')">订单</a></li>
-                    <li id="dh4"><a href="javascript:tiaozhuan2('chanpin','ProductList.aspx','4')">产品</a></li>
+                    <li id="dh9"><a href="javascript:tiaozhuan2('kuaidi','OrderList_WeiXuanZe.aspx','9')">快递</a></li>
                     <li id="dh5"><a href="javascript:tiaozhuan2('youhuiquan','coupon.aspx','5')">优惠券</a></li>
-                    <li id="dh6"><a href="javascript:tiaozhuan2('shanghu','Review.aspx','6')">商户</a></li>
                     <li id="dh7"><a href="javascript:tiaozhuan2('jiesuan','SHJieSuan.aspx','7')">结算</a></li>
+                    <li id="dh6"><a href="javascript:tiaozhuan2('shanghu','Review.aspx','6')">商户</a></li>
                     <li id="dh8"><a href="javascript:tiaozhuan2('tongji','Tongji_Week_biz.aspx','8')">统计</a></li>
-                    <li id="dh9"><a href="javascript:tiaozhuan2('kuaidi','OrderList_WeiXuanZe.aspx','9')">
-                        快递</a></li>
                         <%  
                             if (value["Shanghufz"]=="1")
                             {%>
