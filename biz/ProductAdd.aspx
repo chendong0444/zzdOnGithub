@@ -440,7 +440,7 @@
             SetError("图片不能为空！");
             Response.Redirect("ProductAdd.aspx");
         }
-       
+        promodel.status = 1;    //直接上架，不审核
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             ires = session.Product.Insert(promodel);
