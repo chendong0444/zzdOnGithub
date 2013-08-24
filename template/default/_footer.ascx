@@ -188,11 +188,11 @@
                 &nbsp;Powered by 宗正大团(沪ICP备13015182号</a>)
             </p>
             <div style="text-align: center">
-                <img src="/upfile/img/tenpay_logo.png" style="height:45px;width:100px">
-                <img src="/upfile/img/zhfb_logo.png" style="margin-left: 5px;height:45px;width:100px">
-                <img src="/upfile/img/wxrzh.jpg" style="margin-left: 5px;height:45px;width:100px">
-                <img src="/upfile/img/wshbzh.jpg" style="margin-left: 5px;height:45px;width:100px">
-                <img src="/upfile/img/321.jpg" style="margin-left: 5px;height:45px;width:100px">
+                <img src="/upfile/img/tenpay_logo.png" style="height:40px;width:90px">
+                <img src="/upfile/img/zhfb_logo.png" style="margin-left: 5px;height:40px;width:90px">
+                <img src="/upfile/img/wxrzh.jpg" style="margin-left: 5px;height:40px;width:90px">
+                <img src="/upfile/img/wshbzh.jpg" style="margin-left: 5px;height:40px;width:90px">
+                <img src="/upfile/img/321.jpg" style="margin-left: 5px;height:40px;width:90px">
             </div>
         </div>
     </div>
@@ -203,3 +203,4 @@
     DD_belatedPNG.fix('img,#zk,#logo,.goinput,.goimg,.list1_goods,#partner-comment-btn,#partner-btn,.list1_new,.sjIcon,.list1_cj,.list_new,.list_goods,.list_cj,.pic .normal_on,.pic .normal_off,#recent-deals .pic .isopen,.pzcart,#deal-intro .deal-price-tag,#ft .logo-footer,.deal-price-buy,.cart,.sjIcon,.none-back-money,.deal-price-end,.back-money,.none-over-times,.over-times,.normal_wait,#partner-btn,.goods_on,.isopen,.seconds_off,.seconds_on,.deal-price-over,.roll,.deal-price-notstart,.button-deal-cj,.deal-price-tag,#deal-intro .deal-price-creditmiaosha,.team-more-tag-new,.lg_logo,.lg_logo img,fieldset, img'); 
 </script>
 <![endif]-->
+

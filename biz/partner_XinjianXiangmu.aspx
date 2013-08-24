@@ -847,7 +847,7 @@
         team.teamscore = AS.Common.Utils.Helper.GetInt(teamscore.Value, 0);
         team.Mobile = createmobile.Value;
         team.Address = createaddress.Value;
-        team.teamhost = AS.Common.Utils.Helper.GetInt(Request["hostt"], 0);//首页推荐热销
+        team.teamhost = 3;  //默认自然新品     AS.Common.Utils.Helper.GetInt(Request["hostt"], 0);//首页推荐热销
         team.drawType = AS.Common.Utils.Helper.GetInt(Request["dtype"], 0);//抽奖方式，0:默认为随机,1按顺序生成
         team.apiopen = AS.Common.Utils.Helper.GetInt(Request["apiopen"], 0);
         //判断状态       //购买数量
