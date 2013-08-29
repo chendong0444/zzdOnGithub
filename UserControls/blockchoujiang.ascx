@@ -115,7 +115,7 @@
             <div class="yigoumai">
                 <p class="xyigm">
                     <%=team.Now_number %>
-                    <span style="color: #666">人已购买</span></p>
+                    <span style="color: #666">人已中奖</span></p>
                 <p>
                     <a href="<%=getTeamPageUrl(team.Id)%>">
                         <image src="<%=ImagePath() %>qg_bt.png"></image>

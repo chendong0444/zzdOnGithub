@@ -193,6 +193,8 @@
                 <img src="/upfile/img/wxrzh.jpg" style="margin-left: 5px;height:40px;width:90px">
                 <img src="/upfile/img/wshbzh.jpg" style="margin-left: 5px;height:40px;width:90px">
                 <img src="/upfile/img/321.jpg" style="margin-left: 5px;height:40px;width:90px">
+                <img src="/upfile/img/zx110.png" style="margin-left: 5px;height:40px;width:90px">
+                <img src="/upfile/img/police.png" style="margin-left: 5px;height:40px;width:90px">
             </div>
         </div>
     </div>

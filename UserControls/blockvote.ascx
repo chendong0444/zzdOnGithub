@@ -14,7 +14,7 @@
         <div class="tip">
             <div class="text">
                 <p class="mark">
-                    <a href="<%=GetUrl("小调查","vote_index.aspx")%>">您最想团购的是什么？</a></p>
+                    <a href="<%=GetUrl("小调查","vote_index.aspx")%>">您最想在宗正大团上看到什么？</a></p>
                 <p>
                     请告诉<%=ASSystemArr["abbreviation"] %>，让<%=ASSystemArr["abbreviation"] %>更好地为您服务！</p>
             </div>
