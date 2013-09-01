@@ -575,6 +575,14 @@
                                 </ul>
                             </dd>
                         </dl>
+                        <dl class="acSide_Option">
+                            <dt class="acSide_title">推广</dt>
+                            <dd>
+                                <ul>
+                                    <li name="type"><a href="WeiBo.aspx" target="Right">微博</a></li>
+                                </ul>
+                            </dd>
+                        </dl>
                     </div>
                     <%--网站配置 --%>
                     <div id="WangZhan" runat="server" style="display: none">
