@@ -26,18 +26,18 @@
     {
         base.OnLoad(e);
         //判断管理员是否有此操作
-        if (AdminPage.IsAdmin)//&& AdminPage.CheckUserOptionAuth(PageValue.CurrentAdmin, ActionEnum.Option_TJ_ProblemFeedBack)
-        {
-            SetError("你没有权限！");
-            Response.Redirect("index_index.aspx");
-            Response.End();
-            return;
+        //if (AdminPage.IsAdmin)//&& AdminPage.CheckUserOptionAuth(PageValue.CurrentAdmin, ActionEnum.Option_TJ_ProblemFeedBack)
+        //{
+        //    SetError("你没有权限！");
+        //    Response.Redirect("index_index.aspx");
+        //    Response.End();
+        //    return;
 
-        }
+        //}
 
 
 
-        NetDimension.Weibo.OAuth oauth = new NetDimension.Weibo.OAuth("3865183130", "e19d5813236a8aea4132cf1135dacacc", "http://zzdtuan.apphb.com/manage/weibo.aspx");
+        NetDimension.Weibo.OAuth oauth = new NetDimension.Weibo.OAuth("3865183130", "e19d5813236a8aea4132cf1135dacacc", "http://zzdtuan.com.cn/manage/weibo.aspx");
 
         string code = Request.QueryString["code"] ?? "";
         if (string.IsNullOrEmpty(code))
@@ -56,19 +56,48 @@
                 var uid = Sina.API.Account.GetUID(); //调用API中获取UID的方法
                 var rateLimitStatus = Sina.API.Account.RateLimitStatus();
 
-                var users = Sina.API.Friendships.Friends(uid, "", 5, 0, false);
+                var users = Sina.API.Friendships.Friends(uid, "",200, 0, false);
+                Update(Sina, users.Users);
 
-                StringBuilder sb = new StringBuilder();
-                foreach (var user in users.Users)
+
+                int total = 200;
+                while (true)
                 {
-                    sb.Append("@").Append(user.ScreenName);
-                    if (sb.Length > 110)        //微博内容不能超过140个文字
+                    int nextCursor = 0;
+                    int.TryParse(users.NextCursor, out nextCursor);
+                    users = Sina.API.Friendships.Friends(uid, "", 200, nextCursor, false);
+                    Update(Sina, users.Users);
+
+                    total += 200;
+                    if (users.TotalNumber <= total)
                         break;
                 }
-                var statuse = Sina.API.Statuses.Update("有兴趣帮我的团购网站发微博做推广吗，有兴趣请留个联系方式。" + sb.ToString());
+
             }
         }
 
+    }
+
+    private void Update(NetDimension.Weibo.Client Sina,IEnumerable<NetDimension.Weibo.Entities.user.Entity> users)
+    {
+        List<string> list = new List<string>();
+        StringBuilder sb = new StringBuilder();
+        foreach (var user in users)
+        {
+            sb.Append("@").Append(user.ScreenName);
+            if (sb.Length > 100)        //微博内容不能超过140个文字
+            {
+                list.Add(sb.ToString());
+                sb.Clear();
+                break;
+            }
+        }
+
+        foreach (string str in list)
+        {
+            Sina.API.Statuses.Update("如有兴趣帮我的团购网站做推广请留联系方式" + str);
+            System.Threading.Thread.Sleep(60 * 1000);
+        }
     }
 </script>
 <%LoadUserControl("_header.ascx", null); %>
@@ -86,21 +115,21 @@
                             <div class="box-content">
                                 <div class="head" style="height: 35px;">
                                     <h2>
-                                        首页
+                                        微博
                                     </h2>
                                 </div>
                                 <div class="sect">
                                     <div class="wholetip clear">
                                         <h3>
-                                            反馈数据</h3>
+                                            发送成功</h3>
                                     </div>
                                     <asp:Literal ID="Literal1" runat="server"></asp:Literal>
-                                    <div class="wholetip clear">
+<%--                                    <div class="wholetip clear">
                                         <h3>
                                             问题数据</h3>
                                     </div>
                                     <asp:Literal ID="Literal2" runat="server"></asp:Literal>
-                                </div>
+--%>                                </div>
                             </div>
                         </div>
                     </div>
