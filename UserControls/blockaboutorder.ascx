@@ -21,14 +21,18 @@
 <div class="clear">
 </div>
 <div class="header_info">
-    <br>
+    <br/>
     <strong>我已支付成功，为什么没有<%=couponname%>？</strong>
-    <br>
+    <br/>
     <p>
         因为还没有到达最低团购人数，一旦凑够人数，您就会看到<%=couponname %>了。</p>
-    <br>
+    <br/>
     <strong>什么是已过期订单？</strong>
-    <br>
+    <br/>
     <p>
         如果某个订单未及时付款，那么等团购结束时就无法再付款了，这种订单就是过期订单。</p>
+    <br/>
+    <strong>什么是确认收货？</strong>
+    <br/>
+    <p>如果您某个订单已付款，用户登录支付宝或者财付通。确认收货。</p>
 </div>
