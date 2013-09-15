@@ -194,7 +194,7 @@
 
                                     string message = ReplaceStr("consumption", values);
 
-                                    EmailMethod.SendSMS(phone, message);
+                                    ChinaNetSMSWraper.SendSMS(phone, message);
                                     //提示尊敬的{网站简称}用户{用户名}您的券号{券号}已于{消费时间}被消费。
                                 }
                             }

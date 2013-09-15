@@ -9,6 +9,7 @@
 <%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
 <%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.App" %>
+<%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     protected string strtel = string.Empty;
     protected string strpwd = string.Empty;
@@ -70,7 +71,7 @@
             if (mobilecodecount <= 5 && (DateTime.Parse(now.ToShortDateString() + " 00:00:00") <= now && DateTime.Parse(now.ToShortDateString() + " 23:59:59") >= now))
             {
 
-                if (EmailMethod.SendSMS(mobile_sub, message))
+                if (ChinaNetSMSWraper.SendSMS(mobile_sub, message))
                 {
 
                     Session["mobilecode"] = randnummobile;

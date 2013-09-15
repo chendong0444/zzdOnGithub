@@ -140,7 +140,7 @@
                 values.Add("商户电话", partnermobile);
                 values.Add("团购电话", tuanphone);
                 txt = ReplaceStr("couponsms", values);
-                if (EmailMethod.SendSMS(phone, txt))//Utils.WebSiteHelper.SendSms(sysbll.GetModel(1).smsuser, sysbll.GetModel(1).smspass, userbll.GetModel(couponmodel.User_id).Mobile, "手机短信发送成功，请及时查收"))
+                if (ChinaNetSMSWraper.SendSMS(phone, txt))//Utils.WebSiteHelper.SendSms(sysbll.GetModel(1).smsuser, sysbll.GetModel(1).smspass, userbll.GetModel(couponmodel.User_id).Mobile, "手机短信发送成功，请及时查收"))
                 {
                     txt = JsonUtils.GetJson(txt, "alert");  //调用websitehelper.json方法
                     couponmodel.Sms = couponmodel.Sms + 1;
@@ -248,7 +248,7 @@
                 values.Add("商户电话", partnermobile);
                 values.Add("团购电话", tuanphone);
                 txt = ReplaceStr("couponsms", values);
-                if (EmailMethod.SendSMS(phone, txt))//Utils.WebSiteHelper.SendSms(sysbll.GetModel(1).smsuser, sysbll.GetModel(1).smspass, userbll.GetModel(couponmodel.User_id).Mobile, "手机短信发送成功，请及时查收"))
+                if (ChinaNetSMSWraper.SendSMS(phone, txt))//Utils.WebSiteHelper.SendSms(sysbll.GetModel(1).smsuser, sysbll.GetModel(1).smspass, userbll.GetModel(couponmodel.User_id).Mobile, "手机短信发送成功，请及时查收"))
                 {
                     txt = JsonUtils.GetJson(txt, "alert");  //调用websitehelper.json方法
                     Response.Write(txt);
@@ -363,7 +363,7 @@
                     values.Add("团购电话", tuanphone);
                     txt = ReplaceStr("bizcouponsms", values);
 
-                    if (EmailMethod.SendSMS(phone, txt))
+                    if (ChinaNetSMSWraper.SendSMS(phone, txt))
                     {
                         txt = JsonUtils.GetJson(txt, "alert");  //调用websitehelper.json方法
                         pcoumodel.sms = pcoumodel.sms + 1;

@@ -71,6 +71,7 @@
             partner.City_id = AS.Common.Utils.Helper.GetInt(Request["SelectOne"], 0);
             partner.Group_id = AS.Common.Utils.Helper.GetInt(Request["SelectTow"], 0);
             partner.Open = Request["shanghuxiu"].ToUpper() == "Y" ? "Y" : "N";
+            partner.parentId = AS.Common.Utils.Helper.GetInt(Request["parentId"],0);
             partner.Enable = "Y";
 
 
@@ -466,6 +467,11 @@
                                     <input type="text" name="shanghuxiu" id="shanghuxiu" class="number" value="Y" maxlength="1"
                                         require="true" group="a" datatype="english" style="text-transform: uppercase;" /><span
                                             class="inputtip">Y:前台商户秀展示 N:不参与前台商户秀</span>
+                                </div>
+                                <div class="field">
+                                    <label>父商户Id</label>
+                                    <input type="text" name="parentId" id="parentId" class="number" value="0" maxlength="1" require="true" />
+                                    <span  class="inputtip">没有父商户的默认为0，有父商户的请填父商户的Id</span>
                                 </div>
                                 <div class="field">
                                     <label>

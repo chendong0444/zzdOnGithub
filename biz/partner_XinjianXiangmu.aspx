@@ -443,6 +443,7 @@
         team.Sort_order = 0;// int.Parse(createsort_order.Value);
 
         string strPartnerID = CookieUtils.GetCookieValue("partner", FileUtils.GetKey()).ToString();
+        SetSuccess(strPartnerID);
         int partner_id = 0;
         int.TryParse(strPartnerID, out partner_id);
         team.Partner_id = partner_id;

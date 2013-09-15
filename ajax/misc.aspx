@@ -35,7 +35,7 @@
             string content = Request["content"];
             List<string> phone = new List<string>();
             phone.Add(mobile);
-            if (EmailMethod.SendSMS(phone, content))
+            if (ChinaNetSMSWraper.SendSMS(phone, content))
             {
                 Response.Write(JsonUtils.GetJson("call_succ()", "eval"));
             }

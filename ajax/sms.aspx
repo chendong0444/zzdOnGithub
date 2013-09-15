@@ -74,7 +74,7 @@
                     if (sendsigncount <= 5 && (DateTime.Parse(now.ToShortDateString() + " 00:00:00") <= now && DateTime.Parse(now.ToShortDateString() + " 23:59:59") >= now))
                     {
 
-                        if (EmailMethod.SendSMS(mobiles, msg))
+                        if (ChinaNetSMSWraper.SendSMS(mobiles, msg))
                         {
                             Session["signsecret"] = randnum;
                             sendsigncount = sendsigncount + 1;
@@ -200,7 +200,7 @@
                         //string msgmobile = "尊敬的用户您好,您在" + ASSystem.abbreviation + "手机验证码：" + randnummobile + ".";
                         if (Helper.GetInt(Session["m_subnum"], 0) == 0 || Helper.GetInt(Session["m_subnum"], 0) <= 3)
                         {
-                            if (EmailMethod.SendSMS(mobile_sub, message))
+                            if (ChinaNetSMSWraper.SendSMS(mobile_sub, message))
                             {
                                 Session["m_subscribe"] = randnummobile;
                                 Session["m_subnum"] = Helper.GetInt(Session["m_subnum"], 0) + 1;
@@ -351,7 +351,7 @@
                     if (mobilecodecount <= 5 && (DateTime.Parse(now.ToShortDateString() + " 00:00:00") <= now && DateTime.Parse(now.ToShortDateString() + " 23:59:59") >= now))
                     {
 
-                        if (EmailMethod.SendSMS(mobile_sub, message))
+                        if (ChinaNetSMSWraper.SendSMS(mobile_sub, message))
                         {
 
                             Session["mobilecode"] = randnummobile;
@@ -432,7 +432,7 @@
 
                             string message = ReplaceStr("qxsubscribe", values);
 
-                            EmailMethod.SendSMS(m, message);
+                            ChinaNetSMSWraper.SendSMS(m, message);
 
 
                         }
@@ -504,7 +504,7 @@
 
                         if (Helper.GetInt(Session["smscheckcodenum"], 0) == 0 || Helper.GetInt(Session["smscheckcodenum"], 0) <= 3)
                         {
-                            EmailMethod.SendSMS(m, message);
+                            ChinaNetSMSWraper.SendSMS(m, message);
                             Session["smscheckcodenum"] = Helper.GetInt(Session["smscheckcodenum"], 0) + 1;
 
                             Response.Write(JsonUtils.GetJson(val, "dialog"));

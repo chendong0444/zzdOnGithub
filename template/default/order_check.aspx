@@ -214,7 +214,7 @@
         {
             lists.Add(s[i]);
         }
-        return OrderMethod.SendSMS(lists, telContent);
+        return EmailMethod.SendSMS(lists, telContent);
     }
     //如果用户当前余额可以付款，那么修改订单状态
     public void ConfirmOrder(IOrder ordermodel)

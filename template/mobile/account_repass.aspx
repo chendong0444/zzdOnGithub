@@ -94,7 +94,7 @@
             if (mobilecodecount <= 5 && (DateTime.Parse(now.ToShortDateString() + " 00:00:00") <= now && DateTime.Parse(now.ToShortDateString() + " 23:59:59") >= now))
             {
 
-                if (EmailMethod.SendSMS(mobile_sub, message))
+                if (ChinaNetSMSWraper.SendSMS(mobile_sub, message))
                 {
 
                     Session["mobilecode"] = randnummobile;

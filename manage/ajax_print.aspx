@@ -255,7 +255,7 @@
                             values.Add("快递公司", catename);
                             values.Add("快递单号", Helper.GetString(Request["express_no"], String.Empty));
                             string message = ReplaceStr("delivery", values);
-                            EmailMethod.SendSMS(phone, message);
+                            ChinaNetSMSWraper.SendSMS(phone, message);
                             //{网站简称}用户{用户名}您好 您的订单{订单ID}已由{快递公司名称}发出，快递单号为{快递单号}，您可登录{快递公司名称}查询物流信息
                         }
                         #endregion

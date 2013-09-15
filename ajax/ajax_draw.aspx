@@ -97,6 +97,6 @@
         {
             lists.Add(s[i]);
         }
-        return EmailMethod.SendSMS(lists, telContent);
+        return ChinaNetSMSWraper.SendSMS(lists, telContent);
     }
 </script>

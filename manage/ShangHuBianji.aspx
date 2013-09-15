@@ -91,7 +91,6 @@
             parnter.City_id =AS.Common.Utils.Helper.GetInt(Request["SelectOne"],0);
             parnter.Group_id = AS.Common.Utils.Helper.GetInt(Request["SelectTow"],0);
             parnter.Open = Request["shanghuxiu"].ToUpper() == "Y" ? "Y" : "N";
-            
 
                 if (FileUpload1.FileName != null && FileUpload1.FileName != "")
                 {

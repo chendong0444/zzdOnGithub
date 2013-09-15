@@ -10,6 +10,8 @@
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
+<%@ Import Namespace="System.Collections.Generic" %>
+
 <script runat="server">
     protected override void OnLoad(EventArgs e)
     {

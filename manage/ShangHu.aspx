@@ -301,7 +301,8 @@
                                             <th width='10%'>电话号码</th>
                                             <th width='15%'>销售人员</th>
                                             <th width='5%'>商户秀</th> 
-                                            <th width='25%'>&nbsp;&nbsp;&nbsp;操  作</th>
+                                            <th width='5%'>父商户Id</th> 
+                                            <th width='20%'>&nbsp;&nbsp;&nbsp;操  作</th>
                                         </tr>
                                         <% int i = 2; %>
                                         <%foreach (IPartner item in iListPartner)
@@ -342,6 +343,7 @@
                                                 <td><%=item.getRealName%></td>
 
                                                 <td><%=item.Open %></td>
+                                                <td><%=item.parentId %></td>
 
                                                  <td >
  

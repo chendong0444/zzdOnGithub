@@ -633,7 +633,8 @@
                             <dt class="acSide_title">短信设置</dt>
                             <dd>
                                 <ul>
-                                    <li name="type"><a href="asdht_sms_send.aspx" target="Right">短信发送记录</a></li>
+                                    <li name="type"><a href="asdht_sms_send.aspx" target="Right">艾尚通道短信发送记录</a></li>
+                                    <li name="type"><a href="asdht_chinanet_sms_send.aspx" target="Right">电信通道短信发送记录</a></li>
                                     <li name="type"><a target="_blank" href="/ajax/misc.aspx?action=SMS_rechargeable">短信充值</a></li>
                                     <li name="type"><a href="SheZhi_Duanxin.aspx" target="Right">短信设置</a></li>
                                     <li name="type"><a href="SheZhi_SmsTemplate.aspx" target="Right">短信模版</a></li>

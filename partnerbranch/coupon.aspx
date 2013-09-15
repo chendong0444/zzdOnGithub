@@ -10,6 +10,8 @@
 <%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Collections.Generic" %>
+
 <script runat="server">
     public string strCouponname = "";
     public NameValueCollection _system = new NameValueCollection();
@@ -362,7 +364,7 @@
                                 phone.Add(buyuser.Mobile);
                                 EmailMethod sms = new EmailMethod();
                               //sms.SendSMS(phone, message);
-                              EmailMethod.SendSMS(phone, message);
+                              ChinaNetSMSWraper.SendSMS(phone, message);
                                 //提示尊敬的{网站简称}用户{用户名}您的券号{券号}已于{消费时间}被消费。
                             }
                             #endregion

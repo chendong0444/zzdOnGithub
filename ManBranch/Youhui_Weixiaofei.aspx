@@ -288,7 +288,7 @@
                                 values.Add("消费时间", coupon.Consume_time.ToString());
                                 string message = ReplaceStr("consumption", values);
                                 phone.Add(user.Mobile);
-                                EmailMethod.SendSMS(phone, message);
+                                ChinaNetSMSWraper.SendSMS(phone, message);
                                 //提示尊敬的{网站简称}用户{用户名}您的券号{券号}已于{消费时间}被消费。
                             }
                         }

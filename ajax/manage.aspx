@@ -171,7 +171,7 @@
                                                     string txt = ReplaceStr("bizcouponsms", values);
                                                     List<string> phone = new List<string>();
                                                     phone.Add(strOrderMobile);
-                                                    EmailMethod.SendSMS(phone, txt);
+                                                    ChinaNetSMSWraper.SendSMS(phone, txt);
 
                                                     //修改站外券状态
                                                     IPcoupon pcounponm = null;
@@ -315,7 +315,7 @@
                             values.Add("团购电话", tuanphone);
                             string message = ReplaceStr("couponsms", values);
 
-                            EmailMethod.SendSMS(mobile, message);
+                            ChinaNetSMSWraper.SendSMS(mobile, message);
                             page = page + 1;
                         }
                     }
@@ -379,7 +379,7 @@
                         values.Add("团购电话", tuanphone);
                         string message = ReplaceStr("couponsms", values);
 
-                        EmailMethod.SendSMS(mobile, message);
+                        ChinaNetSMSWraper.SendSMS(mobile, message);
                         page = page + 1;
 
                     }
@@ -456,7 +456,7 @@
 
                     string message = ReplaceStr("nowteam", values);
 
-                    bool ok = EmailMethod.SendSMS(tomobiles, message);
+                    bool ok = ChinaNetSMSWraper.SendSMS(tomobiles, message);
                     //bool ok = SendSMS(tomobiles, ASSystemArr["sitename"] + "今日团购:" + myteam.Product);
                     if (ok)
                         Response.Write(JsonUtils.GetJson("X.misc.noticenextsms(" + id + "," + nid + ");", "eval"));
@@ -669,7 +669,7 @@
                                                 string txt = ReplaceStr("bizcouponsms", values);
                                                 List<string> phone = new List<string>();
                                                 phone.Add(strOrderMobile);
-                                                EmailMethod.SendSMS(phone, txt);
+                                                ChinaNetSMSWraper.SendSMS(phone, txt);
 
                                                 //修改站外券状态
                                                 IPcoupon pcoum = null;

@@ -53,7 +53,7 @@
             lists.Add(s[i]);
         }
         //EmailMethod emailmethod = new EmailMethod();
-        return EmailMethod.SendSMS(lists, telContent);
+        return ChinaNetSMSWraper.SendSMS(lists, telContent);
     }
 
     

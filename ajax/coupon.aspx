@@ -707,7 +707,7 @@
 
                                         string message = ReplaceStr("consumption", values);
 
-                                        EmailMethod.SendSMS(phone, message);
+                                        ChinaNetSMSWraper.SendSMS(phone, message);
                                         //提示尊敬的{网站简称}用户{用户名}您的券号{券号}已于{消费时间}被消费。
 
                                     }
@@ -965,7 +965,7 @@
 
                                                         string message = ReplaceStr("consumption", values);
 
-                                                        EmailMethod.SendSMS(phone, message);
+                                                        ChinaNetSMSWraper.SendSMS(phone, message);
                                                         //提示尊敬的{网站简称}用户{用户名}您的券号{券号}已于{消费时间}被消费。
 
 
@@ -1142,7 +1142,7 @@
                 txt = ReplaceStr("couponsms", values);
 
 
-                if (EmailMethod.SendSMS(phone, txt))//Utils.WebSiteHelper.SendSms(sysbll.GetModel(1).smsuser, sysbll.GetModel(1).smspass, userbll.GetModel(couponmodel.User_id).Mobile, "手机短信发送成功，请及时查收"))
+                if (ChinaNetSMSWraper.SendSMS(phone, txt))//Utils.WebSiteHelper.SendSms(sysbll.GetModel(1).smsuser, sysbll.GetModel(1).smspass, userbll.GetModel(couponmodel.User_id).Mobile, "手机短信发送成功，请及时查收"))
                 {
 
                     txt = JsonUtils.GetJson(txt, "alert");  //调用websitehelper.json方法
@@ -1270,7 +1270,7 @@
                 txt = ReplaceStr("couponsms", values);
 
 
-                if (EmailMethod.SendSMS(phone, txt))//Utils.WebSiteHelper.SendSms(sysbll.GetModel(1).smsuser, sysbll.GetModel(1).smspass, userbll.GetModel(couponmodel.User_id).Mobile, "手机短信发送成功，请及时查收"))
+                if (ChinaNetSMSWraper.SendSMS(phone, txt))//Utils.WebSiteHelper.SendSms(sysbll.GetModel(1).smsuser, sysbll.GetModel(1).smspass, userbll.GetModel(couponmodel.User_id).Mobile, "手机短信发送成功，请及时查收"))
                 {
 
                     txt = JsonUtils.GetJson(txt, "alert");  //调用websitehelper.json方法
@@ -1385,7 +1385,7 @@
                     values.Add("团购电话", tuanphone);
                     txt = ReplaceStr("bizcouponsms", values);
 
-                    if (EmailMethod.SendSMS(phone, txt))
+                    if (ChinaNetSMSWraper.SendSMS(phone, txt))
                     {
                         txt = JsonUtils.GetJson(txt, "alert");  //调用websitehelper.json方法
                         pcoumodel.sms = pcoumodel.sms + 1;
@@ -1621,7 +1621,7 @@
 
                                         string message = ReplaceStr("consumption", values);
 
-                                        EmailMethod.SendSMS(phone, message);
+                                        ChinaNetSMSWraper.SendSMS(phone, message);
                                         //提示尊敬的{网站简称}用户{用户名}您的券号{券号}已于{消费时间}被消费。
 
 
@@ -2433,7 +2433,7 @@
 
                                                         string message = ReplaceStr("consumption", values);
 
-                                                        EmailMethod.SendSMS(phone, message);
+                                                        ChinaNetSMSWraper.SendSMS(phone, message);
                                                         //提示尊敬的{网站简称}用户{用户名}您的券号{券号}已于{消费时间}被消费。
 
                                                     }
