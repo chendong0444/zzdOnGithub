@@ -31,7 +31,7 @@
 <%if(team!=null&&team.Flv!=String.Empty){ %>
 
 <div class="sbox">
-	<div id="team_<%=team.Id %>_player" style="height:210px;width:230px;"><img src="/upfile/team/<%=team.Image %>" height="210" width="230" /></div>
+	<div id="team_<%=team.Id %>_player" style="height:210px;width:230px;"><img src="<%=team.Image %>" height="210" width="230" /></div>
 </div>
 <script>
     window.x_init_hook_player = function () {
