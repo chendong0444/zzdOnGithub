@@ -17,11 +17,9 @@
 <%@ Import Namespace="NetDimension.Weibo.Entities" %>
 <%@ Import Namespace="System.Linq" %>
 <%@ Import Namespace="NetDimension.Weibo" %>
-
-
-
-
 <script runat="server">
+    private NetDimension.Weibo.OAuth oauth;
+    private string code;
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
@@ -36,10 +34,10 @@
         //}
 
 
+        oauth = new NetDimension.Weibo.OAuth("3865183130", "e19d5813236a8aea4132cf1135dacacc", "http://zzdtuan.com.cn/manage/weibo.aspx");
 
-        NetDimension.Weibo.OAuth oauth = new NetDimension.Weibo.OAuth("3865183130", "e19d5813236a8aea4132cf1135dacacc", "http://zzdtuan.com.cn/manage/weibo.aspx");
-
-        string code = Request.QueryString["code"] ?? "";
+        code = Request.QueryString["code"] ?? "";
+        hidCode.Value = code;
         if (string.IsNullOrEmpty(code))
         {
             //第一步获取新浪授权页面的地址
@@ -47,38 +45,10 @@
 
             Response.Redirect(authUrl);
         }
-        else
-        {
-            var accessToken = oauth.GetAccessTokenByAuthorizationCode(code);
-            if (!string.IsNullOrEmpty(accessToken.Token))
-            {
-                NetDimension.Weibo.Client Sina = new NetDimension.Weibo.Client(oauth);
-                var uid = Sina.API.Account.GetUID(); //调用API中获取UID的方法
-                var rateLimitStatus = Sina.API.Account.RateLimitStatus();
-
-                var users = Sina.API.Friendships.Friends(uid, "",200, 0, false);
-                Update(Sina, users.Users);
-
-
-                int total = 200;
-                while (true)
-                {
-                    int nextCursor = 0;
-                    int.TryParse(users.NextCursor, out nextCursor);
-                    users = Sina.API.Friendships.Friends(uid, "", 200, nextCursor, false);
-                    Update(Sina, users.Users);
-
-                    total += 200;
-                    if (users.TotalNumber <= total)
-                        break;
-                }
-
-            }
-        }
 
     }
 
-    private void Update(NetDimension.Weibo.Client Sina,IEnumerable<NetDimension.Weibo.Entities.user.Entity> users)
+    private void Update(NetDimension.Weibo.Client Sina, IEnumerable<NetDimension.Weibo.Entities.user.Entity> users)
     {
         List<string> list = new List<string>();
         StringBuilder sb = new StringBuilder();
@@ -95,13 +65,48 @@
 
         foreach (string str in list)
         {
-            Sina.API.Statuses.Update("如有兴趣帮我的团购网站做推广请留联系方式" + str);
-            System.Threading.Thread.Sleep(60 * 1000);
+            try
+            {
+                Sina.API.Statuses.Update(txtContent.Text + str);
+            }
+            catch (Exception ex)
+            {
+                SetError(ex.ToString());
+            }
+            System.Threading.Thread.Sleep(3 * 60 * 1000);
+        }
+    }
+
+    protected void btnSend_Click(object sender, EventArgs e)
+    {
+        var accessToken = oauth.GetAccessTokenByAuthorizationCode(code);
+        if (!string.IsNullOrEmpty(accessToken.Token))
+        {
+            NetDimension.Weibo.Client Sina = new NetDimension.Weibo.Client(oauth);
+            var uid = Sina.API.Account.GetUID(); //调用API中获取UID的方法
+            var rateLimitStatus = Sina.API.Account.RateLimitStatus();
+
+            var users = Sina.API.Friendships.Friends(uid, "", 20, 0, false);
+            Update(Sina, users.Users);
+
+            int total = 20;
+            while (true)
+            {
+                int nextCursor = 0;
+                int.TryParse(users.NextCursor, out nextCursor);
+                users = Sina.API.Friendships.Friends(uid, "", 20, nextCursor, false);
+                Update(Sina, users.Users);
+
+                total += 20;
+                if (users.TotalNumber <= total)
+                    break;
+            }
         }
     }
 </script>
 <%LoadUserControl("_header.ascx", null); %>
 <body class="newbie">
+    <form id="form1" runat="server">
     <div id="pagemasker">
     </div>
     <div id="dialog">
@@ -117,19 +122,27 @@
                                     <h2>
                                         微博
                                     </h2>
+                                    <p>
+                                        发微博<asp:TextBox ID="txtContent" runat="server" Width="600px" Text="如有兴趣帮我的团购网站做推广请留联系方式"></asp:TextBox>
+                                    </p>
+                                    <p>
+                                        <asp:Button ID="btnSend" runat="server" OnClick="btnSend_Click" Text="发送" />
+                                    </p>
                                 </div>
                                 <div class="sect">
                                     <div class="wholetip clear">
                                         <h3>
-                                            发送成功</h3>
+                                        </h3>
                                     </div>
                                     <asp:Literal ID="Literal1" runat="server"></asp:Literal>
-<%--                                    <div class="wholetip clear">
+                                    <%--                                    <div class="wholetip clear">
                                         <h3>
                                             问题数据</h3>
                                     </div>
                                     <asp:Literal ID="Literal2" runat="server"></asp:Literal>
---%>                                </div>
+                                    --%>
+                                    <asp:HiddenField ID="hidCode" runat="server" />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -137,5 +150,6 @@
             </div>
         </div>
     </div>
+    </form>
 </body>
 <%LoadUserControl("_footer.ascx", null); %>
