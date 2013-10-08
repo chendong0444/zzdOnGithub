@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.BaseUserControl" %>
+﻿﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.BaseUserControl" %>
 <%@ Import Namespace="AS.GroupOn" %>
 <%@ Import Namespace="AS.Common" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
@@ -9,6 +9,7 @@
 <%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Collections" %>
 <script runat="server">
     public IList<IGuid> guidlist = null;
     protected String url = String.Empty;
