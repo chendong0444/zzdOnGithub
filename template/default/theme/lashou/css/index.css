@@ -1423,7 +1423,7 @@ table .deal-buy-desc{ width:500px; text-indent:20px; text-align:left;}
 #referrals .refers .deal-title{float:left;width:237px;padding-left:13px;}
 #referrals #deal-share{float:left;margin-top:16px;}
 #referrals #deal-share h4{color:#000;font-size:12px;*padding-top:2px;_padding-top:0;}
-#referrals #deal-share .deal-share-links{width:370px;padding:5px 10px 5px 25px;float:left;height:20px;}
+#referrals #deal-share .deal-share-links{width:440px;padding:5px 5px 5px 5px;float:left;height:20px;}
 #referrals #deal-share.nodeal{margin-top:12px;}
 
 #consult .consult-hd{float:left;width:702px;_display:inline;margin-left:8px;margin-right:16px;}
