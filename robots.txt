@@ -1,0 +1,11 @@
+User-agent:*
+
+Allow:/
+Allow:/team/list/*.html
+Allow:/team/*.html
+Allow:/tuan6/*
+Disallow:/manage/
+Disallow:/help/
+Disallow:/about/
+Disallow:/feed*
+Disallow:/shopcart*
