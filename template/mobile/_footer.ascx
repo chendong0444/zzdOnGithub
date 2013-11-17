@@ -25,28 +25,15 @@
         <ul class="cf">
             <li><a  href="<%=GetUrl("手机版首页","index.aspx") %>">首页</a></li>
             <li><a  href="<%=GetUrl("手机版个人中心订单","account_orders.aspx") %>">订单</a></li>
-            <li><a  href="<%=PageValue.CurrentSystem.domain %>?PCVersion=1">电脑版</a></li>
+            <%if (PageValue.CurrentSystemConfig["openwapindex"] != "1")
+              {%>
+               <li><a  href="<%=PageValue.CurrentSystem.domain %>?PCVersion=1">电脑版</a></li>   
+              <%} %>
             <li><a  href="<%=GetUrl("手机版用户购买帮助","help_pay.aspx") %>">帮助</a></li>
         </ul>
     </nav>
     <div class="copyright"><span class="copyright">©2013<%=ASSystem.sitename %></span><p></p>
     </div>
 </footer>
-    <script type='text/javascript' src="<%=PageValue.CurrentSystem.domain+PageValue.WebRoot %>upfile/js/Mobile/hideAdressbar.js"></script>
     <script type='text/javascript' src="<%=PageValue.CurrentSystem.domain+PageValue.WebRoot %>upfile/js/Mobile/Zepto.js"></script>
-    <script type='text/javascript' src="<%=PageValue.CurrentSystem.domain+PageValue.WebRoot %>upfile/js/Mobile/Zeptounveil.js"></script>
-    <script type='text/javascript' src="<%=PageValue.CurrentSystem.domain+PageValue.WebRoot %>upfile/js/Mobile/validator.js"></script>
-    <script type='text/javascript' src="<%=PageValue.CurrentSystem.domain+PageValue.WebRoot %>upfile/js/Mobile/base.js"></script>
-<script>
-    $(document).ready(function () {
-        MT.LOG_POS = 'init';
-        MT.city = '<%=PageValue.CurrentCity.Name%>';
-        MT.touch.init();
-        MT.LOG_POS = 'other';
-    });
-</script>
-<script>
-    $(function () {
-        $("img").unveil();
-    });
-</script>
+    <script type='text/javascript' src="<%=PageValue.CurrentSystem.domain+PageValue.WebRoot %>upfile/js/Mobile/mobile.js"></script>

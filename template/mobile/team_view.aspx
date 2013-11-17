@@ -1,14 +1,12 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
 
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+<%@ Import Namespace="AS.GroupOn.App" %>
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
+<%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     protected ITeam teammodel = null;
     protected int teamid = 0;
@@ -105,7 +103,7 @@
     <div id="dealIntro">
         <h1>
             <%=teammodel.Title %></h1>
-        <img alt="<%=teammodel.Product %>" width="138" height="84" src="<%=PageValue.CurrentSystem.domain+WebRoot %><%=teammodel.PhoneImg==null?String.Empty:teammodel.PhoneImg%>" />
+        <img alt="<%=teammodel.Product %>" width="138" height="84" src="<%=TeamMethod.GetWapImgUrl(teammodel.PhoneImg)%>" />
         <detail>
             <ul>
              <li class="price"><label><%=ASSystemArr["currency"] %></label><%=GetMoney(teammodel.Team_price) %></li>
@@ -361,7 +359,7 @@
     </div>
     <%}%>
     <div class="deal-box">
-        <h1 id="deal-more" data-href="<%=GetUrl("手机版项目详情更多", "team_details.aspx") %><%=teamid %>">查看更多详情</h1>
+        <h1 id="deal-more">查看更多详情</h1>
     </div>
     <div style="margin: 0 8px;">
         <p class="c-submit">
@@ -393,10 +391,13 @@
 <%LoadUserControl("_footer.ascx", null); %>
 <script type="text/javascript">
     $(document).ready(function () {
-        MT.touch.tipsForLink('#deal-more', '团购详情图片较多，可能会消耗较多流量。是否继续访问？');
-        MT.touch.toggleByLink();
-    });
-    $(document).ready(function () {
+        $("#deal-more").click(function () {
+            var f = window.confirm('团购详情图片较多，可能会消耗较多流量。是否继续访问？');
+            if (!f) {
+                return
+            }
+            window.location = '<%=GetUrl("手机版项目详情更多","team_details.aspx") %><%=teammodel.Id %>';
+        });
         $("#tb_1").click(function () {
             $("#tb_1").attr("class", "tag current");
             $("#tb_2").attr("class", "tag");

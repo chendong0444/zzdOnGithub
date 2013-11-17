@@ -1,14 +1,11 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
 
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+<%@ Import Namespace="AS.GroupOn.App" %>
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     protected IList<ITeam> list_team = null;
@@ -18,9 +15,10 @@
     protected string pagerhtml = "";
     protected ICatalogs catalog = null;
     protected int catalogid = 0;
-    protected int s = 0;
     protected string cataname = "全部分类";
     public int page = 0;
+    public string errtext = String.Empty;
+    public string suctext = String.Empty;
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
@@ -34,7 +32,14 @@
         {
             CookieUtils.SetCookie("cityid", "0", DateTime.Now.AddYears(1));
         }
-        PageValue.WapBodyID = "index";
+        if (Session["err"] != null)
+        {
+            int type = AS.Common.Utils.Helper.GetInt(Session["type"], 1);
+            if (type == 1) errtext = Session["err"].ToString();
+            if (type == 2) suctext = Session["err"].ToString();
+            Session.Remove("err");
+            Session.Remove("type");
+        }
         PageValue.Title = PageValue.CurrentSystem.abbreviation + "触屏版";
         if (Request["cataid"] != "" && Request["cataid"] != null)
         {
@@ -49,10 +54,10 @@
         }
         if (catalog != null)
         {
-            string str = "";
             cataname = catalog.catalogname;
             WebUtils systemmodel = new WebUtils();
             NameValueCollection values = new NameValueCollection();
+            NameValueCollection newvalues = new NameValueCollection();
             values = WebUtils.GetSystem();
             if (values["zuijin"] == null)
             {
@@ -60,31 +65,18 @@
             }
             else if (!values["zuijin"].ToString().Contains(catalogid.ToString()))
             {
-                s = 1;
                 values.Add("zuijin", catalogid.ToString());
-            }
-            else
-            {
-                s = 0;
-            }
-            systemmodel.CreateSystemByNameCollection(values);
-            string[] zuijin = values["zuijin"].ToString().Split(',');
-            if (zuijin.Length >= 9)
-            {
-                values.Remove("zuijin");
-                for (int i = s; i < s + 9; i++)
-                {
-                    values.Add("zuijin", zuijin[i]);
-                }
-                systemmodel.CreateSystemByNameCollection(values);
-            }
-            for (int i = 0; i < values.Count; i++)
-            {
-                string strKey = values.Keys[i];
-                string strValue = values[strKey];
-                FileUtils.SetConfig(strKey, strValue);
-            }
+                string[] evalue = values["zuijin"].ToString().Split(',');
 
+                if (evalue.Length > 9)
+                {
+                    for (int i = 1; i < evalue.Length; i++)
+                    {
+                        newvalues.Add("zuijin", evalue[i]);
+                    }
+                }
+            }
+            systemmodel.CreateSystemByNameCollection(newvalues);
         }
         InitData(catalogid);
     }
@@ -168,7 +160,27 @@
     }
 </script>
 <%LoadUserControl("_htmlheader.ascx", null); %>
-<%LoadUserControl("_header.ascx", null); %>
+<header>
+        <h1 id="logo">
+            <a  href="<%=GetUrl("手机版首页","index.aspx") %>"><span><%=PageValue.CurrentSystem.sitename%></span></a>
+        </h1>
+        <a class="city" href="<%=GetUrl("手机版城市","city.aspx") %>"><%=PageValue.CurrentCity.Name%></a>
+        <div id="nav">
+            <a class="account"  href="<%=GetUrl("手机版个人中心","account_index.aspx") %>">我的<%=PageValue.CurrentSystem.sitename%></a>
+            <a class="category"  href="<%=GetUrl("手机版分类","category.aspx") %>">分类</a>
+            <a class="search"  href="<%=GetUrl("手机版搜索","search.aspx") %>">搜索</a>
+        </div>
+    </header>
+    <%if (suctext != String.Empty)
+  { %>
+<div id="okMsg" style="opacity: 1;">
+    <%=suctext %></div>
+<%} %>
+<%if (errtext != String.Empty)
+  { %>
+<div id="errMsg" style="opacity: 1;">
+    <%=errtext %></div>
+<%}%>
 <body id='index'>
     <div class="current-category">
         您当前的分类：<%=cataname%></div>
@@ -178,12 +190,14 @@
         <% foreach (var item in list_team)
            {%>
         <div>
-            <a href="<%=GetMobilePageUrl(item.Id) %>"><%=GetTeamType(item) %>
-            <img data-src="<%=PageValue.CurrentSystem.domain+WebRoot %><%=item.PhoneImg==null?String.Empty:item.PhoneImg%>" width="122" height="74" alt="<%=item.Product %>"/>
+            <a href="<%=GetMobilePageUrl(item.Id) %>">
+                <%=GetTeamType(item) %>
+                <img data-src="<%=TeamMethod.GetWapImgUrl(item.PhoneImg)%>" width="122" height="74"
+                    alt="<%=item.Product %>" />
                 <detail>
                     <ul>
-                        <li class="brand"><%=item.Product %></li>
-                        <li class="title indent"><%=item.Title %></li>
+                        <li class="brand"><%=StringUtils.SubString(item.Product,50)%></li>
+                        <li class="title indent"><%=StringUtils.SubString(item.Title,50)%></li>
  <li class="price"><strong><%=GetMoney(item.Team_price)%></strong>元<del><%=GetMoney(item.Market_price)%>元</del><span><%=item.Now_number%>人</span></li>
                     </ul>
                 </detail>
@@ -199,19 +213,11 @@
     </div>
     <nav class="pageinator">
     <div id="nav-page">
-        <%--<%if (AS.Common.Utils.Helper.GetInt(Request["page"], 1) != 1)
-          {%>
-             <a  class="nav-button" href="javascript:history.back()">上一页</a>   
-          <%} %>
-        <%if (list_team!=null&&list_team.Count >= 30)
-          {%>
-             <a class="nav-button" href="<%=url %>">下一页</a>   
-          <%}%>--%>
           <%=pagerhtml%>
     </div>
     <div id="nav-top">
-        <span class="nav-button" onclick="javascript:void(window.scrollTo(0, 0));"><span>回到顶部</span></span>
+        <span class="nav-button"><span>回到顶部</span></span>
     </div>
 </nav>
-<%LoadUserControl("_footer.ascx", null); %>
-<%LoadUserControl("_htmlfooter.ascx", null); %>
+    <%LoadUserControl("_footer.ascx", null); %>
+    <%LoadUserControl("_htmlfooter.ascx", null); %>

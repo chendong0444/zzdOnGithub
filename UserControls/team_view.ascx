@@ -476,7 +476,7 @@
                 diff="<%=difftimefix %>">
                 <div class="limitdate">
                     <p class="deal-buy-ended">
-                        <%= overtime.ToString("yyyy年MM月dd日hh点MM分")%><br />
+                        <%= overtime.ToString("yyyy年MM月dd日HH点MM分")%><br />
                     </p>
                 </div>
             </div>
@@ -490,7 +490,6 @@
                 diff="<%=difftimefix %>">
                 <h3></h3>
                 <div class="limitdate">
-
                     <%if ((teammodel.End_time - DateTime.Now).Days >= 3)
                       { %>
                     <ul>
@@ -518,7 +517,7 @@
                 diff="<%=difftimefix %>">
                 <h3></h3>
                 <div class="limitdate">
-                    <%if ((teammodel.Begin_time - DateTime.Now).Days > 0)
+                    <%if ((teammodel.Begin_time - DateTime.Now).Days >= 3)
                       { %>
                     <ul>
                         <span style="font-size: 20px;">3天以上</span>
@@ -527,13 +526,11 @@
                       else
                       { %>
                     <ul id="counter">
-                        <%if ((teammodel.End_time - DateTime.Now).Days > 0)
-                          {%>
-                        <span><%=(teammodel.End_time - DateTime.Now).Days%></span>天 
-                              <%}%>
-                        <span><%=(teammodel.Begin_time - DateTime.Now).Hours%></span> 时<span>
-                            <%=(teammodel.Begin_time - DateTime.Now).Minutes%></span>分<span>
-                                <%=(teammodel.Begin_time - DateTime.Now).Seconds%></span>秒
+                        <%DateTime endtime = DateTime.Now.AddDays(1).Date;%>
+                        <span><%=(endtime - DateTime.Now).Days%></span>天 
+                        <span><%=(endtime - DateTime.Now).Hours%></span>时
+                        <span><%=(endtime - DateTime.Now).Minutes%></span>分
+                        <span><%=(endtime - DateTime.Now).Seconds%></span>秒
                     </ul>
                     <%} %>
                 </div>

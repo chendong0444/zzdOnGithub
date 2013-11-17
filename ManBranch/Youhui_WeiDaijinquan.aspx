@@ -15,10 +15,14 @@
     protected CardFilter filter = new CardFilter();
     protected string pagerHtml = String.Empty;
     protected string url = "";
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-     
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         if (!IsPostBack)
         {
             SelectWhere();
@@ -81,7 +85,7 @@
         filter.PageSize = 30;
         filter.AddSortOrder(CardFilter.Id_Desc);
         filter.CurrentPage = AS.Common.Utils.Helper.GetInt(Request.QueryString["page"], 1);
-        filter.inOrder_id = AsAdmin.City_id;
+        filter.inOrder_id = usernew.City_id;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             pager = session.Card.GetPager(filter);

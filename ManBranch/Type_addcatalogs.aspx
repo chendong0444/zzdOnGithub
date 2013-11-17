@@ -31,11 +31,14 @@
     protected string style = "";
     protected string str1 = "";
     protected string str2 = "";
-
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-      
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         //分类
         CatalogsFilter catalogsfilter = new CatalogsFilter();
         //分类
@@ -45,7 +48,7 @@
         catalogsfilter.PageSize = 30;
         catalogsfilter.AddSortOrder(CatalogsFilter.Sort_Order_DESC);
         catalogsfilter.CurrentPage = AS.Common.Utils.Helper.GetInt(Request.QueryString["page"], 1);
-        catalogsfilter.cityid =","+AsAdmin.City_id+","; 
+        catalogsfilter.cityid =","+usernew.City_id+","; 
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             pager = session.Catalogs.GetPager(catalogsfilter);
@@ -175,7 +178,7 @@
         ICategory cateby = null;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
-            cateby = session.Category.GetByID(AsAdmin.City_id);
+            cateby = session.Category.GetByID(usernew.City_id);
         }
         sb1.Append("<input type='checkbox' checked='checked'   name='city_id' value='" + cateby.Id + "' disabled='disabled' />&nbsp;" + cateby.Name + "&nbsp;&nbsp;");
         strcitys = sb1.ToString();
@@ -254,7 +257,7 @@
 
 
             catamodel.parent_id = AS.Common.Utils.Helper.GetInt(Request["ddlparent"].ToString().Split(',')[0], 0);
-            catamodel.cityid = "," + AsAdmin.City_id + ",";
+            catamodel.cityid = "," + usernew.City_id + ",";
             using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
             {
                 int idd = session.Catalogs.Update(catamodel);
@@ -321,7 +324,7 @@
             catamodel.keytop = AS.Common.Utils.Helper.GetInt(Request["topsum"], 0);//显示个数
             catamodel.visibility = AS.Common.Utils.Helper.GetInt(Request["state"], 0);//状态是否显示
             catamodel.catahost = AS.Common.Utils.Helper.GetInt(Request["host"], 0);//类别是否主推
-            catamodel.cityid = "," + AsAdmin.City_id + ",";
+            catamodel.cityid = "," + usernew.City_id + ",";
         #endregion
 
             #region 记录跟目录下面的子id

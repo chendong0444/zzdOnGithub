@@ -1,14 +1,11 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
 
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+<%@ Import Namespace="AS.GroupOn.App" %>
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     public string cityname = string.Empty;
@@ -142,8 +139,7 @@
         <%string strs = "";
           if (zuijin != null && zuijin.Length > 0)
           { %>
-        <div id="recently-category" class="category-box" style="transform-origin: 0px 0px 0px;
-            opacity: 1; transform: scale(1, 1);" onclick="clicks('recently-category')">
+        <div id="recently-category" class="category-box" onclick="clicks('recently-category')">
             <div class="category-btn">
                 <h1>
                     最近查看</h1>
@@ -173,8 +169,8 @@
           for (int i = 0; i < tuangou.dalei.Count; i++)
           {
         %>
-        <section id="categorys<%=i %>" class="category-box" onclick="clicks('categorys<%=i %>')">
-        <div class="category-btn" data-name="<%=tuangou.dalei[i].Name%>">
+        <section id="categorys<%=i %>" class="category-box">
+        <div class="category-btn" data-name="<%=tuangou.dalei[i].Name%>" onclick="clicks('categorys<%=i %>')">
         <h1><%=tuangou.dalei[i].Name%><span class="count"></span></h1>
             <label class="arrow"><span class="bg"></span></label> 
          </div> 

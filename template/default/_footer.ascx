@@ -195,6 +195,7 @@
                 <img src="/upfile/img/321.jpg" style="margin-left: 5px;height:40px;width:90px">
                 <img src="/upfile/img/zx110.png" style="margin-left: 5px;height:40px;width:90px">
                 <img src="/upfile/img/police.png" style="margin-left: 5px;height:40px;width:90px">
+                <!--<a href="http://webscan.360.cn/index/checkwebsite/url/zzdtuan.com.cn" name="f49695cd0075ee1057554907340b0e87" >360网站安全检测平台</a>-->
             </div>
         </div>
     </div>

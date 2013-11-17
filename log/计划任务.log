@@ -1,0 +1,30 @@
+远程服务器返回错误: (500) 内部服务器错误。System   在 System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   在 System.Net.WebClient.GetWebResponse(WebRequest request, IAsyncResult result)
+   在 System.Net.WebClient.DownloadBitsResponseCallback(IAsyncResult result)System.Net.WebResponse EndGetResponse(System.IAsyncResult)      -----2013-8-22 17:08:12
+远程服务器返回错误: (500) 内部服务器错误。System   在 System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   在 System.Net.WebClient.GetWebResponse(WebRequest request, IAsyncResult result)
+   在 System.Net.WebClient.DownloadBitsResponseCallback(IAsyncResult result)System.Net.WebResponse EndGetResponse(System.IAsyncResult)      -----2013-8-22 17:09:58
+远程服务器返回错误: (500) 内部服务器错误。System   在 System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   在 System.Net.WebClient.GetWebResponse(WebRequest request, IAsyncResult result)
+   在 System.Net.WebClient.DownloadBitsResponseCallback(IAsyncResult result)System.Net.WebResponse EndGetResponse(System.IAsyncResult)      -----2013-8-22 17:11:06
+远程服务器返回错误: (500) 内部服务器错误。System   在 System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   在 System.Net.WebClient.GetWebResponse(WebRequest request, IAsyncResult result)
+   在 System.Net.WebClient.DownloadBitsResponseCallback(IAsyncResult result)System.Net.WebResponse EndGetResponse(System.IAsyncResult)      -----2013-8-22 17:12:12
+远程服务器返回错误: (500) 内部服务器错误。System   在 System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   在 System.Net.WebClient.GetWebResponse(WebRequest request, IAsyncResult result)
+   在 System.Net.WebClient.DownloadBitsResponseCallback(IAsyncResult result)System.Net.WebResponse EndGetResponse(System.IAsyncResult)      -----2013-8-22 17:13:06
+远程服务器返回错误: (500) 内部服务器错误。System   在 System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   在 System.Net.WebClient.GetWebResponse(WebRequest request, IAsyncResult result)
+   在 System.Net.WebClient.DownloadBitsResponseCallback(IAsyncResult result)System.Net.WebResponse EndGetResponse(System.IAsyncResult)      -----2013-9-1 10:35:05
+远程服务器返回错误: (500) 内部服务器错误。System   在 System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   在 System.Net.WebClient.GetWebResponse(WebRequest request, IAsyncResult result)
+   在 System.Net.WebClient.DownloadBitsResponseCallback(IAsyncResult result)System.Net.WebResponse EndGetResponse(System.IAsyncResult)      -----2013-9-2 13:14:40
+远程服务器返回错误: (500) 内部服务器错误。System   在 System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   在 System.Net.WebClient.GetWebResponse(WebRequest request, IAsyncResult result)
+   在 System.Net.WebClient.DownloadBitsResponseCallback(IAsyncResult result)System.Net.WebResponse EndGetResponse(System.IAsyncResult)      -----2013-9-19 14:22:16
+远程服务器返回错误: (500) 内部服务器错误。System   在 System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   在 System.Net.WebClient.GetWebResponse(WebRequest request, IAsyncResult result)
+   在 System.Net.WebClient.DownloadBitsResponseCallback(IAsyncResult result)System.Net.WebResponse EndGetResponse(System.IAsyncResult)      -----2013-10-1 11:01:18
+远程服务器返回错误: (500) 内部服务器错误。System   在 System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   在 System.Net.WebClient.GetWebResponse(WebRequest request, IAsyncResult result)
+   在 System.Net.WebClient.DownloadBitsResponseCallback(IAsyncResult result)System.Net.WebResponse EndGetResponse(System.IAsyncResult)      -----2013-10-11 8:28:45

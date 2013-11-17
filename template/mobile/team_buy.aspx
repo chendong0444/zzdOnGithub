@@ -1,14 +1,11 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
 
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+<%@ Import Namespace="AS.GroupOn.App" %>
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     protected string str_Fare = "0";
@@ -179,14 +176,6 @@
         else
         {
             teamid = Request["id"].ToString();
-        }
-        string oldmobile = Helper.GetString(Request["oldmobile"], String.Empty);
-        if (oldmobile != String.Empty && oldmobile.Trim() != AsUser.Mobile)
-        {
-            SetError("已绑定手机号输入错误，请重新输入");
-            Response.Redirect(GetUrl("手机版订单购买", "team_buy.aspx") + Request["id"]);
-            Response.End();
-            return;
         }
         string newmobile = Helper.GetString(Request["newmobile"], String.Empty);
         if (newmobile != String.Empty && !StringUtils.ValidateString(newmobile, "mobile"))
@@ -954,8 +943,6 @@
         <% }
           else
           { %>
-
-
         <div class="common-title" id="mobile-title">
             <h3>当前手机号码</h3>
         </div>
@@ -963,16 +950,8 @@
             <div class="common-item">
                 <span class="item-label">手机号码：</span>
                 <div class="item-content">
-                    <%if (AsUser.Mobile != null && AsUser.Mobile.Length > 0)
-                      {%>
-                    <%=AsUser.Mobile.Substring(0,3)+"****"+AsUser.Mobile.Remove(0,7)%>
-                    <a id="change-mobile" href="javascript:void(0)">修改</a>
-                </div>
-                <%}
-                      else
-                      {%>
-                <input type="number" placeholder="请输入您的手机号码" required="required" disabled="disabled" name="newmobile" value="" />
-                <%}%>
+                <input type="text" placeholder="请输入您的手机号码" required="required" name="newmobile" value="<%=AsUser.Mobile %>" />
+            </div>
             </div>
             <div class="common-item">
                 <span class="item-label">订单附言：</span>
@@ -981,24 +960,10 @@
                 </div>
             </div>
         </div>
-        <div class="common-items" id="mobile-modify" style="display: none;">
-            <div class="common-item">
-                <span class="item-label">旧手机号：</span>
-                <div class="item-content">
-                    <input type="number" placeholder="请输入已绑定的手机号码" required="required" disabled="disabled" name="oldmobile" value="" />
-                </div>
-            </div>
-            <div class="common-item">
-                <span class="item-label">新手机号：</span>
-                <div class="item-content">
-                    <input type="number" placeholder="请输入新手机号" required="required" disabled="disabled" name="newmobile" value="" />
-                </div>
-            </div>
-        </div>
         <%} %>
         <div class="submit-box">
             <p class="c-submit ">
-                <input id="Submit1" type="submit" gaevent="imt/buy/submit" runat="server" onserverclick="submit_ServerClick" value="提交订单" />
+                <input id="Submit1" type="submit" runat="server" onserverclick="submit_ServerClick" value="提交订单" />
             </p>
         </div>
     </form>
@@ -1007,136 +972,37 @@
 <%LoadUserControl("_footer.ascx", null); %>
 <script>
     $(function () {
-        MT.touch.initQuantityBox();
-        // 是否需要清除缓存
-        var needClearCache = Boolean("");
-        var $title = $('#mobile-title'),
-            $modify = $('#mobile-modify'),
-            isQuickBuy = false,
-            $errMsg = ($('#errMsg').length > 0) ? $('#errMsg') : $('#buy .errMsg'),
-            isShowModified = false, timeId;
-
-        var errMsgFadeIn = MT.util.errMsgFadeIn;
-
-        var tapOrClick = MT.util.tapOrClick;
-
-        // 清空数据
-        if (needClearCache) {
-            localStorage.removeItem('isAddressOrMobileChanged');
-            localStorage.removeItem('formData');
-        }
-        $('#buy-form').validator(function (msg) {
-            errMsgFadeIn.call($errMsg, 'text', msg);
-        });
-
-        // 当用户修改手机号码：1. #add-mobile有值 2.点击了”修改“(change-mobile)按钮
-        $('#add-mobile').on('change', function (e) {
-            localStorage.isAddressOrMobileChanged = 'true';
-
-        });
-        $('#change-mobile').on(tapOrClick, function (e) {
-            e.preventDefault();
-
-            localStorage.isAddressOrMobileChanged = 'true';
-
-            if (!isShowModified) {
-                isShowModified = true;
-                $modify.show();
-                $modify.find('input').removeAttr('disabled');
-                $title.html('更换手机号');
-                $(this).text('取消修改')
-            } else {
-                isShowModified = false;
-                $modify.hide();
-                $modify.find('input').attr('disabled', 'disabled');
-                $title.html('当前手机号码');
-                $(this).text('修改');
-            }
-        });
-
-        // 当用户修改收货地址：1.点击了”使用其它地址“(change-address)按钮 2.点击”添加收货人地址“（add-address)按钮
-        $('#change-address').on(tapOrClick, function (e) {
-            e.preventDefault();
-
-            localStorage.isAddressOrMobileChanged = 'true';
-        });
-        $('#add-address').on(tapOrClick, function (e) {
-            e.preventDefault();
-
-            localStorage.isAddressOrMobileChanged = 'true';
-        });
-
-        $('#sms-captcha').on('keyup', function (e) {
-            var isValideMobile = $('#smsCode').attr('class').indexOf('active') > -1,
-                $submitBtn = $('.c-submit');
-
-            if (isValideMobile && $(this).val()) {
-                $smsCode.removeClass('c-disabled').find('input').prop('disabled', '');
-            } else {
-                $smsCode.addClass('c-disabled');
-            }
-        })
-
-
-        $('#login-mobile').on('keyup', function (e) {
-            if (/^\d{11}$/.test($("#login-mobile").val())) {
-                $("#smsCode").addClass('active');
-            }
-            else {
-                $("#smsCode").removeClass('active');
-            }
-        })
-
-
-        function resetSMSBtn($btn, immediately) {
-            $btn.addClass('wait-a-minute');
-            var MINUTE = 60;
-
-            if (immediately && timeId) {
-                clearInterval(timeId);
-                $btn.removeClass('wait-a-minute').text('发送验证码');
-                return false;
-            }
-
-            timeId = setInterval(function () {
-                if (MINUTE) {
-                    $btn.text((MINUTE > 10 ? MINUTE : (' ' + MINUTE)) + '秒后重发');
-                    MINUTE--;
-                } else {
-                    clearInterval(timeId);
-                    $btn.removeClass('wait-a-minute').text('发送验证码');
+        $(".quantity-box").on('click', function (h) {
+            h.preventDefault();
+            var g = $(this), c = g.find(".minus"), f = g.find(".plus"), i = g.find("input"), d = i.attr("min") || 0, b = i.attr("max") || Number.MAX_VALUE;
+            target = h.target.parentNode.className, quantity = Number(i.val());
+            if (target.indexOf("minus") > -1) {
+                if ((quantity - 1) >= d) {
+                    i.val(quantity - 1)
                 }
-            }, 1000);
-        }
-
-        // 当用户点击了修改号码，校验新旧手机号码
-        $('#form').on('submit', function (e) {
-            var str = selectInput();
-            $("#bulletin").val(str);
-            // 快捷购买增加手机号
-            if (isQuickBuy) {
-                if (!$('input[name=quickBuyCode]').val()) {
-                    errMsgFadeIn.call($errMsg, 'text', '请输入验证码')
-                    return false;
+                if ((quantity - 1) == d) {
+                    c.removeClass("active")
+                }
+                if (f.attr("class").indexOf("active") < 0) {
+                    f.addClass("active")
                 }
             } else {
-                if (isShowModified) {
-                    var newMobile = $('input[name=newmobile]').val(),
-                        oldMobile = $('input[name=oldmobile]').val();
-
-                    if (!newMobile || !oldMobile ||
-                            !/^\d{11}$/.test(newMobile) || !/^\d{11}$/.test(oldMobile)) {
-
-                        if (newMobile === oldMobile) {
-                            errMsgFadeIn.call($errMsg, 'text', '请输入不同的新旧手机号码');
-                        } else {
-                            errMsgFadeIn.call($errMsg, 'text', '请输入正确的手机号码');
-                        }
-
-                        e.preventDefault();
+                if (target.indexOf("plus") > -1) {
+                    if ((quantity + 1) <= b) {
+                        i.val(quantity + 1)
+                    }
+                    if ((quantity + 1) == b) {
+                        f.removeClass("active")
+                    }
+                    if (c.attr("class").indexOf("active") < 0) {
+                        c.addClass("active")
                     }
                 }
             }
+        });
+        $('#form').on('submit', function (e) {
+            var str = selectInput();
+            $("#bulletin").val(str);
         });
     });
     $("#citylist").load("<%=PageValue.WebRoot%>ajax/citylist.aspx?pid=0&type=mobile", null, function (data) { });

@@ -19,10 +19,14 @@
     protected string date_type = "";
     protected string where_type = "";
     protected PcouponFilter filter = new PcouponFilter();
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         if (!string.IsNullOrEmpty(Request.QueryString["date_type"]))
         {
             url = url + "&date_type=" + Request.QueryString["date_type"];
@@ -146,7 +150,7 @@
         filter.PageSize = 30;
         filter.AddSortOrder(PcouponFilter.ID_ASC);
         filter.CurrentPage = AS.Common.Utils.Helper.GetInt(Request.QueryString["page"], 1);
-        filter.inOrderid = AsAdmin.City_id;
+        filter.inOrderid = usernew.City_id;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             pager = session.Pcoupon.GetPager(filter);
@@ -217,14 +221,14 @@
             product = team.Products;
             if (team != null)
             {
-                if (AsAdmin.Id == 0)
+                if (PageValue.CurrentAdmin.Id == 0)
                 {
                     SetError("友情提示：当前管理员不存在,删除失败");
                     Response.Redirect("Youhui_pcoupon.aspx");
                     Response.End();
                 }
                 team.inventory = team.inventory - 1;
-                intoorder(0, -1, 4, team.Id, AsAdmin.Id, "", 0);
+                intoorder(0, -1, 4, team.Id, PageValue.CurrentAdmin.Id, "", 0);
                 if (product != null)
                 {
                     product.inventory = product.inventory - 1;
@@ -239,7 +243,7 @@
                     if (product != null)
                     {
                         session.Product.Update(product);
-                        intoorder(0, -1, 4, product.id, AsAdmin.Id, "", 1);
+                        intoorder(0, -1, 4, product.id, PageValue.CurrentAdmin.Id, "", 1);
                     }
                     session.Pcoupon.Delete(id);
                 }

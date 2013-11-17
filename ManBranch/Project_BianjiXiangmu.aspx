@@ -89,9 +89,14 @@
     protected string strlevelcity = String.Empty;
     public string team_id = String.Empty;
     protected ITeam team = null;
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
-        base.OnLoad(e);              
+        base.OnLoad(e);
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }             
         if (!IsPostBack)
         {
             if (Request.QueryString["id"] != null)
@@ -676,7 +681,7 @@
         
        
         categoryft.Zone = "city";
-        categoryft.City_pid = AsAdmin.City_id;
+        categoryft.City_pid = usernew.City_id;
 
         //IList<ICategory> listCategory = null;
         //using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
@@ -686,7 +691,7 @@
         ICategory catcity = null;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
-            catcity = session.Category.GetByID(AsAdmin.City_id);
+            catcity = session.Category.GetByID(usernew.City_id);
         }
         if (catcity!=null)
         {
@@ -697,7 +702,7 @@
             
         }
         
-        chengshi.Value = AsAdmin.City_id.ToString();
+        chengshi.Value = usernew.City_id.ToString();
         city.Items.Add(chengshi);
         //foreach (ICategory item in listCategory)
         //{
@@ -765,7 +770,7 @@
         li1.Value = "0";
         shanghu.Items.Add(li1);
         pateft.AddSortOrder(PartnerFilter.ID_DESC);
-       // pateft.City_id = AsAdmin.City_id;
+       // pateft.City_id = usernew.City_id;
         IList<IPartner> listPartner = null;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
@@ -1051,7 +1056,7 @@
         team.productid = int.Parse(ddlProduct.SelectedValue);
         if (AdminPage.AsAdmin != null)
         {
-            team.User_id = AdminPage.AsAdmin.Id;
+            team.User_id = PageValue.CurrentAdmin.Id;
         }
         else
         {

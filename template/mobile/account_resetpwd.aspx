@@ -1,14 +1,10 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
 
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     protected override void OnLoad(EventArgs e)
@@ -35,7 +31,7 @@
                 {
                     if (Request.Form["password"] == Request.Form["password2"])
                     {
-                        IUser userpwd = Store.CreateUser();
+                        IUser userpwd = AS.GroupOn.App.Store.CreateUser();
                         userpwd.Password = System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(Request.Form["password"] + PassWordKey, "md5");
                         userpwd.Id = AsUser.Id;
                         int i = 0;

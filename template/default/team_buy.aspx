@@ -529,7 +529,7 @@
         //订单总额：商品数量*商品团购价格
         string strNum = Request.Form["num"].ToString();
         float iPTotal = int.Parse(Request.Form["num"].ToString()) * float.Parse(teammodel.Team_price.ToString());
-        if (Server.UrlDecode(OrderMethod.buyresult()).Replace(".", ",").Replace("-", "|") != "" && teammodel.invent_result.Contains("价格"))
+        if (Server.UrlDecode(OrderMethod.buyresult()).Replace(".", ",").Replace("-", "|") != "" && teammodel.invent_result != null && teammodel.invent_result.Contains("价格"))
         {
             string result = Server.UrlDecode(OrderMethod.buyresult()).Replace(".", ",").Replace("-", "|");
             iPTotal = int.Parse(Request.Form["num"].ToString()) * float.Parse(Utility.Getrulemoney(teammodel.Team_price.ToString(), teammodel.invent_result, result));
@@ -626,7 +626,7 @@
                 }
                 mOrder.result = Server.UrlDecode(OrderMethod.buyresult()).Replace(".", ",").Replace("-", "|");//写入规格
 
-                if (mOrder.result != "" && teammodel.invent_result.Contains("价格"))
+                if (mOrder.result != "" && teammodel.invent_result != null && teammodel.invent_result.Contains("价格"))
                 {
                     strPrice = Utility.Getrulemoney(teammodel.Team_price.ToString(), teammodel.invent_result, mOrder.result);
                 }
@@ -1086,7 +1086,7 @@
                                     <td align="center" style="padding: 10px">
                                         <div class="num_div">
 
-                                            <%if (Helper.GetString(Utility.Getbulletin(teammodel.bulletin), "") != "")
+                                            <%if (teammodel.bulletin!=null&&Helper.GetString(Utility.Getbulletin(teammodel.bulletin), "") != "")
                                               { %>
                                             <input type="text" id="num" idval="<%=teammodel.Id %>" maxval="<%=teammodel.Max_number %>"
                                                 minval="<%=teammodel.Min_number %>" onfocus="shopcar(<%=teammodel.Id %>,this.value, encodeURIComponent('<%=Server.UrlDecode(result) %>'))"

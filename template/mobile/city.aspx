@@ -1,14 +1,11 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
 
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+<%@ Import Namespace="AS.GroupOn.App" %>
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     protected IList<ICity> citylist = null;
@@ -52,8 +49,8 @@
             for (int i = 0; i < zonelist.Count; i++)
             {
                 ICategory cate = zonelist[i];
-                cityshtml.Append("<div id=\"" + cate.Id + "\" class=\"category-box show-cate\" onclick=\"clicks(" + cate.Id + ")\">");
-                cityshtml.Append("<div class=\"category-btn\">");
+                cityshtml.Append("<div id=\"" + cate.Id + "\" class=\"category-box show-cate\">");
+                cityshtml.Append("<div class=\"category-btn\" onclick=\"clicks(" + cate.Id + ")\">");
                 cityshtml.Append("<h1>" + cate.Name + "</h1><span class=\"arrow\"><span class=\"bg\"></span></span>");
                 cityshtml.Append("</div>");
                 cityshtml.Append("<ul>");
@@ -74,7 +71,7 @@
                         ICategory c = catelists[j];
                         if (c.Display.ToUpper() == "Y")
                         {
-                            cityshtml.Append("<li><a href=" + PageValue.WebRoot + "wap/" + c.Ename + "/" + " class='city'>" + c.Name + "</a></li>");
+                            cityshtml.Append("<li><a href=" + PageValue.WebRoot + "wap/" + c.Ename.TrimEnd() + "/" + " class='city'>" + c.Name + "</a></li>");
                         }
                     }
                 }
@@ -84,8 +81,8 @@
         }
         if (otherlist != null && otherlist.Count > 0)
         {
-            cityshtml.Append("<div id=\"moren\" class=\"category-box show-cate\" onclick=\"clicks('moren')\">");
-            cityshtml.Append("<div class=\"category-btn\">");
+            cityshtml.Append("<div id=\"moren\" class=\"category-box show-cate\">");
+            cityshtml.Append("<div class=\"category-btn\" onclick=\"clicks('moren')\">");
             cityshtml.Append("<h1>默认城市</h1><span class=\"arrow\"><span class=\"bg\"></span></span>");
             cityshtml.Append("</div>");
             cityshtml.Append("<ul>");
@@ -94,7 +91,7 @@
                 ICategory c = otherlist[k];
                 if (c.Display.ToUpper() == "Y")
                 {
-                    cityshtml.Append("<li><a href=" + PageValue.WebRoot +"wap/"+ c.Ename + "/" + " class='city'>" + c.Name + "</a></li>");
+                    cityshtml.Append("<li><a href=" + PageValue.WebRoot + "wap/" + c.Ename + "/" + " class='city'>" + c.Name + "</a></li>");
                 }
             }
             cityshtml.Append("<li><a href=" + PageValue.WebRoot + "wap/quanguo" + "/" + " class='city'>全国</a></li>");
@@ -129,8 +126,8 @@
         <%=cityshtml %>
         <%for (int i = 0; i < letters.Count; i++)
           { %>
-        <div id="letter<%=i %>" class="category-box " onclick="clicks('letter<%=i %>')">
-            <div class="category-btn  ">
+        <div id="letter<%=i %>" class="category-box ">
+            <div class="category-btn" onclick="clicks('letter<%=i %>')">
                 <h1>
                     <%=letters[i].Letter%>
                 </h1>
@@ -142,7 +139,7 @@
                   {%>
                 <%foreach (ICity city in citys)
                   { %>
-                <li><a href="<%=PageValue.WebRoot %>wap/<%=city.Ename %>/">
+                <li><a href="<%=PageValue.WebRoot %>wap/<%=city.Ename.TrimEnd()%>/">
                     <%=city.Name%></a></li>
                 <%}%>
                 <%}%>

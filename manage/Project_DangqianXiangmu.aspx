@@ -167,7 +167,7 @@
                 if (this.txtteam.Text != null)
                 {
                     filter.TitleLike = this.txtteam.Text;
-                    url = url + "&TitleLike=" + AS.Common.Utils.Helper.GetInt(this.txtteam.Text, 0);
+                    url = url + "&TitleLike=" + this.txtteam.Text;
                 }
             }
             else if (this.ddlstate.SelectedValue == "3" || Request.QueryString["cityidIn"] != null)//城)//城市

@@ -127,7 +127,7 @@
         base.OnLoad(e);
         catalogid = Helper.GetInt(Request["catalogid"], 0);
         brandid = Helper.GetInt(Request["brandid"], 0);
-        keyword = Helper.GetString(Request["keyword"], String.Empty);
+        keyword =Server.HtmlDecode(Helper.GetString(Request["keyword"], String.Empty));
         sortid = Helper.GetInt(Request["sort"], 0);
         areaid = Helper.GetInt(Request["areaid"], 0);
         tuangou.title = ASSystem.title;

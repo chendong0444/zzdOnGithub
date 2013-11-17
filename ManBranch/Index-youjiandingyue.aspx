@@ -11,9 +11,14 @@
     protected string pagepar = "";
     protected string PageHtml = String.Empty;
     protected int id = 0;
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
 
         id = AS.Common.Utils.Helper.GetInt(Request["remove"], 0);
 
@@ -57,7 +62,7 @@
         filter.PageSize = 30;
         filter.CurrentPage=AS.Common.Utils.Helper.GetInt(Request.QueryString["page"],1);
         filter.AddSortOrder(MailerFilter.ID_DESC);
-        filter.City_id = AsAdmin.City_id;
+        filter.City_id = usernew.City_id;
         using(IDataSession session = AS.GroupOn .App .Store .OpenSession(false))
         {
             pager = session .Mailers .GetPager(filter);

@@ -41,9 +41,18 @@
     public NameValueCollection _system = null;
     protected int aid = 0;
     ITeam team = AS.GroupOn.App.Store.CreateTeam();
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+
+       
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
+        
+        
         _system =AS.Common.Utils.WebUtils.GetSystem();
       
 
@@ -427,8 +436,8 @@
     private void addContent()
     {
         string createUpload = "";
-       
-        team.User_id = AdminPage.AsAdmin.Id;
+
+        team.User_id = PageValue.CurrentAdmin.Id;
         team.cataid = AS.Common.Utils.Helper.GetInt(this.ddlparent.SelectedValue, 0);//项目分类的编号
         team.commentscore = AS.Common.Utils.Helper.GetDecimal(commentscore.Value, 0);//评论返利的金额
         int titlelenth = System.Text.Encoding.Default.GetByteCount(title.Value);
@@ -459,7 +468,7 @@
         team.Begin_time = DateTime.Now;
         team.End_time = DateTime.Now.AddDays(2);
         team.Sort_order = int.Parse(createsort_order.Value);
-        team.City_id = AsAdmin.City_id;
+        team.City_id = usernew.City_id;
         team.start_time = DateTime.Now;
         team.Expire_time = DateTime.Now.AddDays(4);
         team.Reach_time = null;

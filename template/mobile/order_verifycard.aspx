@@ -1,13 +1,12 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+
+<%@ Import Namespace="AS.GroupOn.App" %>
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
+<%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     public ITeam teammodel = null;
     public IOrder ordermodel = null;
@@ -241,7 +240,7 @@
         if ($card.length < 1)
             return false;
 
-        $card.on(MT.util.tapOrClick, function (e) {
+        $card.on('click', function (e) {
             e.preventDefault();
 
             var code = $(this).find('.code').text();

@@ -250,9 +250,9 @@
                 sb2.Append(item.Name.ToString());
             }
             sb2.Append("</td>");
-            sb2.Append("<td nowrap>" + pat.Contact.ToString() + "</td>");
-            sb2.Append("<td nowrap>" + pat.Phone.ToString() + "<br/>" + pat.Mobile.ToString() + "</td>");
-            sb2.Append("<td nowrap>" + pat.Open.ToString() + "</td>");
+            sb2.Append("<td nowrap>" + pat.Contact + "</td>");
+            sb2.Append("<td nowrap>" + pat.Phone + "<br/>" + pat.Mobile + "</td>");
+            sb2.Append("<td nowrap>" + pat.Open + "</td>");
             sb2.Append("<td class='op' nowrap>");
             sb2.Append("<a href='" + PageValue.WebRoot + "sale/PartnetUpdate.aspx?id=" + pat.Id.ToString() + "'>编辑</a>｜");
             sb2.Append("<a href='" + PageValue.WebRoot + "sale/PartnetList.aspx?remove=" + pat.Id.ToString() + "' ask='确定删除本商户？'>删除</a>｜");

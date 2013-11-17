@@ -28,6 +28,8 @@
     protected string alipay_dy = "";
     protected string fangshia = "";
     protected string fangshib = "";
+    protected string waptenpay_mid = "";
+    protected string waptenpay_sec = "";
     public WebUtils sysmodel = new WebUtils();
     protected ISystem system = Store.CreateSystem();
     public NameValueCollection _system = new NameValueCollection();
@@ -62,6 +64,9 @@
         values.Add("isybbank", Request.Form["isybbank"]);//易宝直连开关
         values.Add("is_Certify_Tenpay", Request.Form["ddltenpaytype"]);//财付通直连开关
         values.Add("iscftbank", Request.Form["iscftbank"]);//财付通直连开关
+        values.Add("open_wap_alipay", Request.Form["wapalipay"]);//财付通直连开关
+        values.Add("waptenpay_mid", Request.Form["waptenpay_mid"]);//财付通直连开关
+        values.Add("waptenpay_sec", Request.Form["waptenpay_sec"]);//财付通直连开关
         systemmodel.CreateSystemByNameCollection(values);
         for (int i = 0; i < values.Count; i++)
         {
@@ -116,6 +121,8 @@
         paypal_sec = system.paypalsec;
         allinpay_mid = _system["allinpaymid"];
         allinpay_sec = _system["allinpaysec"];
+        waptenpay_mid = _system["waptenpay_mid"];
+        waptenpay_sec = _system["waptenpay_sec"];
         ddltenpaytype.Value = _system["is_Certify_Tenpay"];
         isybbank.Value = _system["isybbank"];
         if (_system["autodeliver"] == "1")//支付宝自动发货开关
@@ -157,6 +164,13 @@
                 alipay_dy = "checked";
             }
         }
+        if (!string.IsNullOrEmpty(_system["open_wap_alipay"]))
+        {
+            if (_system["open_wap_alipay"] == "1")
+            {
+                wapalipay.SelectedIndex = 1;
+            }
+        }
     }
 </script>
 <%LoadUserControl("_header.ascx", null); %>
@@ -193,6 +207,17 @@
                                         </select><span id="SPAN4" style="width: 200px; padding-top: 10px;"><a target="_blank"
                                             href="http://bizpartner.alipay.com/asdht/index.htm">点此签约开通支付宝</a></span>
                                     </div>
+                                      <div class="field">
+                                       <label>
+                                            是否开启手机支付</label>
+                                            <select id="wapalipay" name="wapalipay" runat="server">
+                                            <option value="0">否</option>
+                                            <option value="1">是</option>
+                                        </select>
+                                        <span id="SPAN3" style="width: 200px; padding-top: 10px;"><a target="_blank"
+                                            href="https://b.alipay.com/order/productDetail.htm?productId=2012120700377308">点此申请开通手机网站支付</a></span>
+                                       
+                                     </div>
                                     <div class="field">
                                         <label>
                                             支付宝邮箱</label>
@@ -221,7 +246,6 @@
                                     </div>
                                     <script>
                                         function select1(obj) {
-
                                             var product = "fastpay";
                                             var alipaytype = $("#alipaytype").val();
                                             if (alipaytype == "0") {
@@ -233,11 +257,8 @@
                                             else if (alipaytype == "2") {
                                                 product = "dualpay";
                                             }
-
                                             $("#getPid").html("<a target='_blank' href='https://b.alipay.com/order/pidKey.htm?pid=2088301351056172&product=" + product + "'>获取PID、KEY</a>");
                                         }
-
-
                                     </script>
                                     <div class="field">
                                         <label>
@@ -357,7 +378,21 @@
                                     </div>
                                     <div class="wholetip clear">
                                         <h3>
-                                            5、PayPal贝宝支付（没有的话，保留为空）</h3>
+                                            5、财付通手机支付（没有的话，保留为空）</h3>
+                                    </div>
+                                    <div class="field">
+                                        <label>
+                                            商户账号</label>
+                                        <input type="text" size="30" id="waptenpay_mid" name="waptenpay_mid" class="f-input" value="<%=waptenpay_mid %>" />
+                                    </div>
+                                    <div class="field">
+                                        <label>
+                                            交易密钥</label>
+                                        <input type="text" size="30" id="waptenpay_sec" name="waptenpay_sec" class="f-input" value="<%=waptenpay_sec %>" />
+                                    </div>
+                                    <div class="wholetip clear">
+                                        <h3>
+                                            6、PayPal贝宝支付（没有的话，保留为空）</h3>
                                     </div>
                                     <div class="field">
                                         <label>
@@ -370,7 +405,6 @@
                                         <input type="text" size="30" id="paypal_sec" name="paypal_sec" class="f-input" value="<%=paypal_sec %>" />
                                     </div>
                                     <div class="act">
-                                      <%--  <input type="hidden" name="action" value="upzhifu" />--%>
                                         <input id="commit" type="submit" class="formbutton" value="保存" />
                                     </div>
                                 </div>

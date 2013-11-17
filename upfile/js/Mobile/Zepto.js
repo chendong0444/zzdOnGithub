@@ -615,7 +615,7 @@ var Zepto = function () {
             return c(b)[a](this), this
         }
     }), A.Z.prototype = c.fn, A.uniq = C, A.deserializeValue = Y, c.zepto = A, c
-}();
+} ();
 window.Zepto = Zepto, "$" in window || (window.$ = Zepto),
 function (a) {
     function g(a) {
@@ -808,7 +808,7 @@ function (a) {
                 return this.defaultPrevented
             }, c
         }
-}(Zepto),
+} (Zepto),
 function (a) {
     function b(a) {
         var b = this.os = {}, c = this.browser = {}, d = a.match(/WebKit\/([\d.]+)/),
@@ -829,7 +829,7 @@ function (a) {
         e && (b.android = !0, b.version = e[2]), g && (b.ios = b.iphone = !0, b.version = g[2].replace(/_/g, ".")), f && (b.ios = b.ipad = !0, b.version = f[2].replace(/_/g, ".")), h && (b.webos = !0, b.version = h[2]), i && (b.touchpad = !0), l && (b.blackberry = !0, b.version = l[2]), m && (b.bb10 = !0, b.version = m[2]), n && (b.rimtabletos = !0, b.version = n[2]), o && (c.playbook = !0), j && (b.kindle = !0, b.version = j[1]), k && (c.silk = !0, c.version = k[1]), !k && b.android && a.match(/Kindle Fire/) && (c.silk = !0), p && (c.chrome = !0, c.version = p[1]), q && (c.firefox = !0, c.version = q[1]), b.tablet = !!(f || o || e && !a.match(/Mobile/) || q && a.match(/Tablet/)), b.phone = !b.tablet && !!(e || g || h || l || m || p && a.match(/Android/) || p && a.match(/CriOS\/([\d.]+)/) || q && a.match(/Mobile/))
     }
     b.call(a, navigator.userAgent), a.__detect = b
-}(Zepto),
+} (Zepto),
 function (a, b) {
     function s(a) {
         return t(a.replace(/([a-z])([A-Z])/, "$1-$2"))
@@ -890,7 +890,7 @@ function (a, b) {
                 })
             }, 0), this
     }, i = null
-}(Zepto),
+} (Zepto),
 function (a, b) {
     function h(c, d, e, f, g) {
         typeof d == "function" && !g && (g = d, d = b);
@@ -932,7 +932,7 @@ function (a, b) {
             d[d.css("opacity") == 0 || d.css("display") == "none" ? "fadeIn" : "fadeOut"](b, c)
         })
     }
-}(Zepto),
+} (Zepto),
 function ($) {
     function triggerAndReturn(a, b, c) {
         var d = $.Event(b);
@@ -946,7 +946,7 @@ function ($) {
         a.global && $.active++ === 0 && triggerGlobal(a, null, "ajaxStart")
     }
     function ajaxStop(a) {
-        a.global && !--$.active && triggerGlobal(a, null, "ajaxStop")
+        a.global && ! --$.active && triggerGlobal(a, null, "ajaxStop")
     }
     function ajaxBeforeSend(a, b) {
         var c = b.context;
@@ -1108,7 +1108,7 @@ function ($) {
         }, serialize(c, a, b), c.join("&")
             .replace(/%20/g, "+")
     }
-}(Zepto),
+} (Zepto),
 function (a) {
     a.fn.serializeArray = function () {
         var b = [],
@@ -1139,7 +1139,7 @@ function (a) {
         }
         return this
     }
-}(Zepto),
+} (Zepto),
 function (a) {
     function f(f, h) {
         var i = f[e],
@@ -1183,7 +1183,7 @@ function (a) {
             })
         })
     }
-}(Zepto),
+} (Zepto),
 function (a) {
     function h(a) {
         return "tagName" in a ? a : a.parentNode
@@ -1234,4 +1234,115 @@ function (a) {
                 return this.bind(b, a)
             }
         })
-}(Zepto)
+} (Zepto),
+function (a) {
+    a.fn.unveil = function (j) {
+        var f = a(window),
+            c = j || 0,
+            e = window.devicePixelRatio > 1,
+            h = e ? "data-src-retina" : "data-src",
+            k = this,
+            i, g, b;
+        this.one("unveil", function () {
+            b = this.getAttribute(h);
+            b = b || this.getAttribute("data-src");
+            if (b) {
+                this.setAttribute("src", b)
+            }
+        });
+
+        function d() {
+            g = k.filter(function () {
+                var m = a(this),
+                    l = f.scrollTop(),
+                    o = l + f.height(),
+                    p = m.offset()
+                        .top,
+                    n = p + m.height();
+                return n >= l - c && p <= o + c
+            });
+            i = g.trigger("unveil");
+            k = k.not(i)
+        }
+        f.scroll(d);
+        f.resize(d);
+        d();
+        return this
+    }
+} (Zepto),
+function (b) {
+    function a(c, e) {
+        var d = this;
+        d.form = b(c);
+        if (d.form.is("form")) {
+            d.callback = e ||
+			function (f) {
+			    alert(f)
+			};
+            d.form.submit(function () {
+                return d.doSubmit()
+            }).on("keyup", "input[data-cls], input[data-nocls]", function () {
+                var h = b(this), i = h.data("partner"), g = h.data("cls"), j = h.data("nocls"), f = !h.val() || d._hasError(h);
+                if (i) {
+                    h = b(i)
+                }
+                if ((f && g) || (!f && j)) {
+                    h.removeClass(g || j)
+                } else {
+                    h.addClass(g || j)
+                }
+            })
+        }
+    }
+    b.extend(a.prototype, {
+        doSubmit: function () {
+            var d = this.form.find("input"), e, c = d.length, f = 0;
+            for (; f < c; ++f) {
+                e = d[f];
+                if (a.textType.indexOf(e.type + ",") !== -1) {
+                    if (this._hasError(e)) {
+                        e.focus();
+                        this.callback(e.title || this.msg || "输入错误", e);
+                        return false
+                    }
+                }
+            }
+            return true
+        },
+        _hasError: function (d) {
+            var d = b(d), f = d.val(), c = d.attr("type"), e = d.prop("required") && !d.prop("disabled");
+            if (e && !f) {
+                this.msg = "输入不能为空";
+                return true
+            }
+            if (e || f) {
+                if (d.attr("pattern")) {
+                    if (!new RegExp("^" + d.attr("pattern") + "$").test(f)) {
+                        this.msg = "输入格式不正确";
+                        return true
+                    }
+                } else {
+                    if (a.type[c]) {
+                        if (!a.type[c].test(f)) {
+                            this.msg = "输入的类型不正确";
+                            return true
+                        }
+                    }
+                }
+            }
+            return false
+        }
+    });
+    a.type = {
+        email: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
+        number: /^\d+$/,
+        date: /^\d{4}-\d{2}-\d{2}$/,
+        tel: /^(?:1\d{12}|\d{4}-?\d{7,8}(?:-\d{3,5})?)$/,
+        url: /^[a-zA-z]+:\/\/[^\s]*$/
+    };
+    a.textType = "text,search,email,number,date,tel,";
+    b.fn.validator = function (c) {
+        new a(this, c);
+        return this
+    }
+} (Zepto)

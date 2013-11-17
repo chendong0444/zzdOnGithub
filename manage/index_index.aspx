@@ -38,7 +38,7 @@
                             <div class="box-content">
                                 <div class="head">
                                     <h2>
-                                        首页</h2>
+                                        首页(ASdht_V<%=AS.Common.Utils.Version.SiteVersion%>)</h2>
                                 </div>
                                 <div class="sect">
                                     <div style="margin-left: 20px; margin-top: 20px;">

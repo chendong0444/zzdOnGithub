@@ -1,14 +1,7 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
 
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
-<%@ Import Namespace="AS.GroupOn.Controls" %>
-<%@ Import Namespace="AS.GroupOn.Domain" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
 <%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
+<%@ Import Namespace="AS.GroupOn.Controls" %>
 <script runat="server">
     protected string strUser = string.Empty;
     protected string strPwd = string.Empty;
@@ -23,6 +16,20 @@
         {
             if (Request.Form["username"] != null && Request.Form["password"] != null)
             {
+                if (Request.Form["username"] == "" || Request.Form["username"].Trim()=="")
+                {
+                    SetError("请输入用户名！");
+                    Response.Write("0");
+                    Response.End();
+                    return;
+                }
+                if (Request.Form["password"] == "" || Request.Form["password"].Trim() == "")
+                {
+                    SetError("请输入密码！");
+                    Response.Write("3");
+                    Response.End();
+                    return;
+                }
                 strUser = Helper.GetString(Request.Form["username"].ToString().Trim(), String.Empty);
                 strPwd = Helper.GetString(Request.Form["password"].ToString().Trim(), String.Empty);
                 logintype = "nomal";
@@ -30,6 +37,20 @@
 
             if (Request.Form["mobile"] != null && Request.Form["code"] != null)
             {
+                if (Request.Form["mobile"] == "" || Request.Form["mobile"].Trim() == "")
+                {
+                    SetError("请输入手机号！");
+                    Response.Write("0");
+                    Response.End();
+                    return;
+                }
+                if (Request.Form["code"] == "" || Request.Form["code"].Trim() == "")
+                {
+                    SetError("请输入验证码！");
+                    Response.Write("4");
+                    Response.End();
+                    return;
+                }
                 strcode = Helper.GetString(Request.Form["code"].ToString().Trim(), String.Empty);
                 strUser = Helper.GetString(Request.Form["mobile"].ToString().Trim(), String.Empty);
                 logintype = "mobile";
@@ -49,8 +70,11 @@
     <div class="wrapper">
         <nav class="login-tab cur-normal">
             <div id="normal-tab" class="normal-tab" ><%= PageValue.CurrentSystem.sitename%>账号登录</div>
-            <div id="quick-tab" class="quick-tab" >手机验证登录</div>
-            <div class="hilight-tab"></div>
+            <%if ( PageValue.CurrentSystemConfig["openwaplogin"] != null && PageValue.CurrentSystemConfig["openwaplogin"] != "0")
+              {%>
+             <div id="quick-tab" class="quick-tab" >手机验证登录</div>
+             <div class="hilight-tab" ></div>  
+             <%}%>
         </nav>
         <div id="login-panel" class="panel" data-tab="normal">
             <div id="normal-panel" class="active-panel normal-panel">
@@ -66,12 +90,12 @@
                 </p>
                 </form>
             </div>
-            <div id="quick-panel" class="quick-panel">
+            <div id="quick-panel" class="quick-panel"  <%if (PageValue.CurrentSystemConfig["openwaplogin"] == null || PageValue.CurrentSystemConfig["openwaplogin"] == "0"){%>style="display:none" <%}%> >
                 <form id="quick-login-form" autocomplete="off" method="post">
                 <div class="number">
                     <input type="text" id="login-mobile" name="mobile" placeholder="请输入手机号" title="请输入正确的手机号"
                         pattern="[0-9]*" required="required" class="common-text">
-                    <span id="smsCode" >发送验证码</span>
+                    <span id="smsCode">发送验证码</span>
                 </div>
                 <div class="code">
                     <input class="common-text" id="code" name="code" type="text" pattern="[0-9]*" required="required"
@@ -114,11 +138,13 @@
     /*
     * 切换tab
     */
+    <%if ( PageValue.CurrentSystemConfig["openwaplogin"] != null && PageValue.CurrentSystemConfig["openwaplogin"] != "0")
+    {%>
     $(function () {
         var $loginTab = $('.login-tab'),
             $loginPanel = $('#login-panel');
 
-        $loginTab.on(MT.util.tapOrClick, 'div', function (e) {
+        $loginTab.on('click', 'div', function (e) {
             var CUR_NORMAL = 'cur-normal',
                 CUR_QUICK = 'cur-quick';
 
@@ -131,6 +157,7 @@
             }
         });
     });
+    <%}%>
     /*
     * 账号登录和快捷登录
     */
@@ -138,10 +165,9 @@
         var $normalLoginForm = $('#normal-login-form'),
             $quickLoginForm = $('#quick-login-form'),
             $errMsg = $('#errMsg').length > 0 ? $('#errMsg') : $('.errMsg'),
-            errMsgFadeIn = MT.util.errMsgFadeIn,
             uuid, hasPoped = false, reqCaptchaTimes = 0, timeId;
 
-        var tapOrClick = MT.util.tapOrClick;
+        var tapOrClick = 'click';
 
         $normalLoginForm.submit(function (e) {
             var params = $normalLoginForm.serialize();

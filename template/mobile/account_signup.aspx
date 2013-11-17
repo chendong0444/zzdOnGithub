@@ -1,14 +1,10 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
 
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     protected string strtel = string.Empty;
@@ -31,7 +27,7 @@
             }
             UserFilter uf = new UserFilter();
             uf.Mobile = strMobile.Trim();
-            using (IDataSession seion = Store.OpenSession(false))
+            using (IDataSession seion = AS.GroupOn.App.Store.OpenSession(false))
             {
                 listuser = seion.Users.GetList(uf);
             }
@@ -71,7 +67,7 @@
             if (mobilecodecount <= 5 && (DateTime.Parse(now.ToShortDateString() + " 00:00:00") <= now && DateTime.Parse(now.ToShortDateString() + " 23:59:59") >= now))
             {
 
-                if (ChinaNetSMSWraper.SendSMS(mobile_sub, message))
+                if (EmailMethod.SendSMS(mobile_sub, message))
                 {
 
                     Session["mobilecode"] = randnummobile;

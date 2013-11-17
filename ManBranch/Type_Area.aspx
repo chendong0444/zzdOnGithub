@@ -17,10 +17,14 @@
     protected string type = "";
     protected string Name = "";
     protected int id = 0;
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-      
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         AreaFilter filter = new AreaFilter();
 
         if (Request.QueryString["id"] != null && Request["id"].ToString() != "")
@@ -33,8 +37,8 @@
         else
         {
             filter.type = "area";
-            filter.cityid = AsAdmin.City_id;
-            filter.or_in_circle_pid = AsAdmin.City_id;
+            filter.cityid = usernew.City_id;
+            filter.or_in_circle_pid = usernew.City_id;
         }
 
         if (Request.QueryString["remove"] != null && Request.QueryString["remove"].ToString() != "")

@@ -32,9 +32,14 @@
     protected string str2 = "";
     protected int location = 0;
     public NameValueCollection _system = null;
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         //分类
         CatalogsFilter catalogsfilter = new CatalogsFilter();
         //分类
@@ -44,7 +49,7 @@
         catalogsfilter.PageSize = 30;
         catalogsfilter.AddSortOrder(CatalogsFilter.Sort_Order_DESC);
         catalogsfilter.CurrentPage = AS.Common.Utils.Helper.GetInt(Request.QueryString["page"], 1);
-        catalogsfilter.cityid = "," + AsAdmin.City_id.ToString() + ",";
+        catalogsfilter.cityid = "," + usernew.City_id.ToString() + ",";
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             pager = session.Catalogs.GetPager(catalogsfilter);
@@ -146,7 +151,7 @@
         CatalogsFilter catafilter = new CatalogsFilter();
         IList<ICatalogs> listcata = null;
         catafilter.AddSortOrder(CatalogsFilter.ID_DESC);
-        catafilter.cityid = "," + AsAdmin.City_id + ",";
+        catafilter.cityid = "," + usernew.City_id + ",";
         catafilter.type = 1;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
@@ -254,7 +259,7 @@
             //}
 
             catamodel.sort_order = AS.Common.Utils.Helper.GetInt(Request["sort"], 0);
-            catamodel.cityid = "," + AsAdmin.City_id.ToString() + ",";
+            catamodel.cityid = "," + usernew.City_id.ToString() + ",";
             catamodel.keytop = AS.Common.Utils.Helper.GetInt(Request["topsum"], 0);//显示个数
             catamodel.visibility = AS.Common.Utils.Helper.GetInt(Request["state"], 0);//状态是否显示
             catamodel.catahost = AS.Common.Utils.Helper.GetInt(Request["host"], 0);//类别是否主推
@@ -323,7 +328,7 @@
                         }
                     }
                     catamodel.type = 1;
-                    catamodel.cityid = "," + AsAdmin.City_id.ToString() + ",";
+                    catamodel.cityid = "," + usernew.City_id.ToString() + ",";
                     using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
                     {
                         int iddd = session.Catalogs.Update(catamodel);
@@ -447,7 +452,7 @@
             catamodel.catahost = AS.Common.Utils.Helper.GetInt(Request["host"], 0);//类别是否主推
             catamodel.location = AS.Common.Utils.Helper.GetInt(Request["location"], 0);
             catamodel.type = 1;
-            catamodel.cityid = "," + AsAdmin.City_id.ToString() + ",";
+            catamodel.cityid = "," + usernew.City_id.ToString() + ",";
             if (catamodel.parent_id == 0)
             {
                 if (Request.Files[0].FileName.Length <= 0)

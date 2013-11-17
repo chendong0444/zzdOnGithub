@@ -1,14 +1,10 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
 
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     protected ITeam teammodel = null;
@@ -38,7 +34,7 @@
         }
         if (teammodel != null)
         {
-            strhtml.AppendFormat("<img src='{0}' />", PageValue.CurrentSystem.domain + WebRoot + (teammodel.PhoneImg == null ? String.Empty : teammodel.PhoneImg), teammodel.Title);
+            strhtml.AppendFormat("<img src='{0}' />", TeamMethod.GetWapImgUrl(teammodel.PhoneImg), teammodel.Title);
             strhtml.Append("<h2>" + teammodel.Product + "</h2>");
             strtitle = teammodel.Product;
         }

@@ -453,4 +453,3 @@
 </body>
 <%LoadUserControl("_footer.ascx", null); %>
 <%LoadUserControl("_htmlfooter.ascx", null); %>
-</html>

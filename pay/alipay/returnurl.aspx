@@ -28,6 +28,10 @@
             string[] str = order.Split(',');
             if (str[2] == "0")
             {
+                if (total_fee ==string.Empty||total_fee==null)
+                {
+                    total_fee = Request.QueryString["total_fee"];
+                }
                 if (updateorder(order_no, total_fee, "alipay", null))
                 {
                     WebUtils.LogWrite("访问日志", "returnurl充值成功" + trade_status);
@@ -172,6 +176,7 @@
         bool ok = false;
         if (order_no.Length > 0)
         {
+            //WebUtils.LogWrite("返回错误", order_no + "|" + total_fee + "|" + service + "|" + pay_time);
             OrderMethod.Updateorder(order_no, total_fee, service, pay_time);
             ok = true;
         }

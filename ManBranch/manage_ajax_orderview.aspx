@@ -160,6 +160,10 @@
                     service.InnerText = "货到付款";
                 else if (order.Service == "cash")
                     service.InnerText = "线下支付";
+                else if (order.Service == "alipaywap")
+                    service.InnerText = "支付宝手机支付";
+                else if (order.Service == "tenpaywap")
+                    service.InnerText = "财付通手机支付";
                 money.InnerText = order.Money.ToString();
             }
             card.InnerText = order.Card.ToString();

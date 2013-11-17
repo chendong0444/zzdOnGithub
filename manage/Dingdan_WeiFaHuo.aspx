@@ -9,6 +9,7 @@
 <%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
 <%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.App" %>
+<%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     protected IPagers<IOrder> pager = null;
     protected IList<IOrder> list_order = null;
@@ -28,10 +29,11 @@
         base.OnLoad(e);
         
         //判断管理员是否有此操作
-        if (!AdminPage.IsAdmin || !(AdminPage.IsAdmin && AdminPage.CheckUserOptionAuth(PageValue.CurrentAdmin, ActionEnum.Option_Order_Express_Print_NoPrintList)))
+        if (AdminPage.IsAdmin && AdminPage.CheckUserOptionAuth(PageValue.CurrentAdmin, ActionEnum.Option_Order_Express_DeliveryNo_ListView))
         {
-            SetError("你不具有查看未打印快递订单的权限！");
+            SetError("你不具有查看未发货记录的权限！");
             Response.Redirect("index_index.aspx");
+            Response.End();
             return;
         }
         if (!string.IsNullOrEmpty(Request.QueryString["begintime"]))
@@ -111,12 +113,9 @@
             }
 
         }
-
         InitData();
 
     }
-
-
     private string expresshtml = String.Empty;
     protected string ExpressHtml
     {
@@ -157,10 +156,8 @@
 
     private void InitData()
     {
-
         url = url + "&page={0}";
         url = "Dingdan_WeiFaHuo.aspx?" + url.Substring(1);
-
         filter.State = "pay";
         filter.PageSize = 30;
         filter.Express_id = 0;
@@ -250,7 +247,7 @@
                             <div class="box-content">
                                 <div class="head">
                                     <h2>
-                                        未选择快递</h2><form id="Form1" runat="server" method="get">
+                                        未发货</h2><form id="Form1" runat="server" method="get">
                                 <div class="search">
                                  生成订单时间：<input type="text" class="h-input" datatype="date" name="begintime"
                                         <%if(!string.IsNullOrEmpty(Request.QueryString["begintime"])){ %>value="<%=Request.QueryString["begintime"] %>"
@@ -289,101 +286,164 @@
                                 <div class="sect">
                                     <table id="orders-list" cellspacing="0" cellpadding="0" border="0" class="coupons-table">
                                         <tr>
-                                            <th width="10%">
+                                            <th width='10%'>
                                                 ID
                                             </th>
-                                            <th class="xiangmu" width="20%">
+                                            <th width='17%'>
                                                 项目
                                             </th>
-                                            <th width="20%">
+                                            <th width='8%'>
                                                 用户
                                             </th>
-                                            <th width="20%">
-                                                派送地址
+                                            <th width='10%'>
+                                                数量
                                             </th>
-                                            <th width="10%">
-                                                快递公司
+                                            <th width='10%'>
+                                                总款
                                             </th>
-                                            <th width="20%">
-                                                操作<%=ExpressHtml.Replace("order_express_id_{0}","expresses") %>
-                                                <input type="button" name="selexpress" value="批量选择" />
+                                            <th width='10%'>
+                                                余付
+                                            </th>
+                                            <th width='10%'>
+                                                在线支付
+                                            </th>
+                                            <th width='10%'>
+                                                支付方式
+                                            </th>
+                                            <th width='10%'>
+                                                递送方式
+                                            </th>
+                                            <th width='5%'>
+                                                操作
                                             </th>
                                         </tr>
-                                        <%    
+                                        <% 
                                             IUser user = Store.CreateUser();
                                             ITeam team = Store.CreateTeam();
                                             IList<ITeam> teamlist = null;
                                             IList<IOrderDetail> orderlist = null;
                                             int i = 0;
 
-                                            foreach (IOrder order in list_order)
+                                            if (list_order != null && list_order.Count > 0)
                                             {
-                                                user = order.User;
-                                                team = order.Team;
-
-                                                if (i % 2 != 0)
-                                                { %>
+                                                foreach (IOrder order in list_order)
+                                                {
+                                                    user = order.User;
+                                                    team = order.Team;
+                                                    if (i % 2 != 0)
+                                                    {%>
                                         <tr>
-                                            <%  }
-                                        else
-                                        { %>
+                                            <% }
+                                                 else
+                                                 { %>
                                             <tr class='alt'>
-                                                <%   
+                                                <% 
 }
-                                        i++;
+                                                 i++;
                                                 %>
-                                                <td width='40'>
-                                                    <% =order.Id%>
+                                                <td>
+                                                    <%=order.Id%>
                                                 </td>
-                                                <td class='xiangmu'>
+                                                <td>
                                                     <% 
                                                         if (order.Team_id == 0)
                                                         {
                                                             teamlist = order.Teams;
                                                             orderlist = order.OrderDetail;
                                                             foreach (IOrderDetail teams in order.OrderDetail)
-                                                            {
-                                                    %>
-                                                    项目ID:<%= teams.Teamid%>
-                                                    (<a class="deal-title" href='<%=getTeamPageUrl(teams.Teamid)%>'
-                                                        target="_blank"><% =StringUtils.SubString(teams.Title, 70) + "..."%></a>) <%=StringUtils.SubString(AS.Common.Utils.WebUtils.Getbulletin(teams.result), 0, "<br>")%>
+                                                            {%>
+                                                    项目ID:<%=teams.Teamid%>
+                                                    (<a class="deal-title" href='<%=getTeamPageUrl(teams.Teamid)%>' target="_blank"><%=StringUtils.SubString(teams.Team.Title, 70) + "..."%>
+                                                    </a>) <%=StringUtils.SubString(AS.Common.Utils.WebUtils.Getbulletin(teams.result), 0, "<br>")%>
                                                     <%
                                                         }
 }
 else
 { %>
                                                     项目ID:<%=order.Team_id%>
-                                                    (<a class="deal-title" href='<%=getTeamPageUrl(order.Team_id)%>' target="_blank">
-                                                        <%=StringUtils.SubString(team.Title, 70) + "..."%>
+                                                    <%if (team != null)
+                                                      { %>
+                                                    (<a class="deal-title" href='<%=getTeamPageUrl(order.Team_id)%>' target="_blank"><%=StringUtils.SubString(team.Title, 70) + "..."%>
                                                     </a>)
                                                     <% 
 }
-if (order.result != null)
-    StringUtils.SubString(AS.Common.Utils.WebUtils.Getbulletin(order.result), 0, "<br>");
-                                                    %>
-                                                </td>
-                                                <td width="140">
-                                                    <%if (user != null)
-                                                      {%>
-                                                    <a class="ajaxlink" href='ajax_manage.aspx?action=userview&Id=<%=order.User_id %>'>
-                                                        <%=user.Email%><br>
-                                                        <%=user.Username%></a>&nbsp;»&nbsp; <a class="ajaxlink" href='ajax_manage.aspx?action=sms&v=<%=user.Mobile %>'>
-                                                            短信</a>
-                                                    <%} %>
-                                                </td>
-                                                <td width="250">
-                                                    <%=order.Address%>
-                                                </td>
-                                                <td width="60">
-                                                    <%=GetExpressHtml(order.Id) %>
-                                                </td>
-                                                <td>
-                                                    <input type="button" value="保存" oid='<%=order.Id %>' id='orderbutton<%=order.Id %>'>
-                                                </td>
-                                            </tr>
-                                            <% 
 }
 
+if (order.result != null)
+    StringUtils.SubString(AS.Common.Utils.WebUtils.Getbulletin(order.result), 0, "<br>");
+if (order.Parent_orderid != null && order.Parent_orderid != 0)
+{%>
+                                                    <br>
+                                                    <font style="color: #0D6D00; font-weight: bold;">该订单父ID:<% =order.Parent_orderid%></font>
+                                                    <%} %>
+                                                </td>
+                                                <%if (user != null)
+                                                  { %>
+                                                <td>
+                                                    <a class="ajaxlink" href='ajax_manage.aspx?action=userview&Id=<%=order.User_id %>'>
+                                                        <%=user.Email%>
+                                                        <br>
+                                                        <%=user.Username%></a>&nbsp;»&nbsp;<a class="ajaxlink" href='ajax_manage.aspx?action=sms&v=<%=user.Mobile %>'>短信</a>
+                                                </td>
+                                                <%}
+                                                  else
+                                                  {
+                                                %>
+                                                <td>
+                                                </td>
+                                                <%} %>
+                                                <td>
+                                                    <%=order.Quantity%>
+                                                </td>
+                                                <td>
+                                                    <%=order.Origin%>
+                                                </td>
+                                                <td>
+                                                    <%=order.Credit%>
+                                                </td>
+                                                <td>
+                                                    <%=(order.Service == "cashondelivery" ? order.cashondelivery.ToString("0.00") : order.Money.ToString("0.00")) %>
+                                                </td>
+                                                <td>
+                                                    <%=WebUtils.GetPayText(order.State, order.Service)%>
+                                                </td>
+                                                <td>
+                                                    <%=GetOrderExpress(order) %>
+                                                </td>
+                                                <% 
+                                                    if (order.State == "pay" || order.State == "scorepay")
+                                                    {%>
+                                                <td class="op">
+                                                    <a class="ajaxlink" href='ajax_manage.aspx?action=orderview&orderview=<%=order.Id%>'>
+                                                        详情</a>
+                                                </td>
+                                                <% 
+                                                    }
+else if (order.State == "cancel" || order.State == "nocod")
+{%>
+                                                <td class="op">
+                                                    <a class="deal-title" href='DingDan_YiFaHuo.aspx?delete=<%=order.Id  %>' ask="确定删除本单吗？">
+                                                        删除</a>｜<a class="ajaxlink" href='ajax_manage.aspx?action=orderview&orderview=<%= order.Id %>'>详情</a>
+                                                </td>
+                                                <%  }
+else if (order.State == "unpay" || order.State == "scoreunpay")
+{%>
+                                                <td class="op">
+                                                    <a class="deal-title" href='DingDan_YiFaHuo.aspx?id=<%=order.Id %>' ask="确定本单为现金付款?">
+                                                        现金</a>｜<a class="deal-title" href='DingDan_YiFaHuo.aspx?delete=<%=order.Id %>' ask="确定删除本单吗？">删除</a>｜<a
+                                                            class="ajaxlink" href='ajax_manage.aspx?action=orderview&orderview=<%=order.Id %>'>详情</a>
+                                                </td>
+                                                <%   }
+else if (order.State == "refund" || order.State == "refunding")
+{%>
+                                                <td class="op">
+                                                    <a class="ajaxlink" href='ajax_manage.aspx?action=orderview&type=refunding&orderview=<%= order.Id %>'>
+                                                        详情</a>
+                                                </td>
+                                                <%  }%>
+                                            </tr>
+                                            <% }
+                                         }
                                             %>
                                             <tr>
                                                 <td colspan="10">

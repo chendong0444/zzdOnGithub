@@ -1,13 +1,11 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+
+<%@ Import Namespace="AS.GroupOn.App" %>
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     public IPagers<ITeam> teampager = null;
@@ -147,7 +145,7 @@
                   {
             %>
             <a href="<%=GetMobilePageUrl(item.Id) %>">
-                <img width="122" height="74" alt="<%=item.Product %>" src="<%=PageValue.CurrentSystem.domain+WebRoot %><%=item.PhoneImg==null?String.Empty:item.PhoneImg%>">
+                <img width="122" height="74" alt="<%=item.Product %>" src="<%=TeamMethod.GetWapImgUrl(item.PhoneImg)%>">
                 <detail>
 <ul>
 <li class="brand"><%=item.Product %></li>
@@ -174,7 +172,7 @@
                   {
             %>
             <a href="<%=GetMobilePageUrl(item.Id) %>"><span class="mark new"><i></i>新单 </span>
-                <img width="122" height="74" alt="<%=item.Product %>" src="<%=PageValue.CurrentSystem.domain+WebRoot %><%=item.PhoneImg==null?String.Empty:item.PhoneImg%>">
+                <img width="122" height="74" alt="<%=item.Product %>" src="<%=TeamMethod.GetWapImgUrl(item.PhoneImg)%>">
                 <detail>
 <ul>
 <li class="brand"><%=item.Product %></li>

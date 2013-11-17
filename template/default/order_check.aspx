@@ -70,7 +70,7 @@
         {
             ordermodel.Realname = user.Realname;
             ordermodel.Mobile = user.Mobile;
-            ordermodel.Address = user.Address;
+            //ordermodel.Address = user.Address;
             ordermodel.Zipcode = user.Zipcode;
             ordermodel.Origin = totalprice;
         }
@@ -351,7 +351,34 @@
                     if (namevalue != null) //判断一下为了防止cookie发生异常
                     {
                         ICps cpsmodel = Store.CreateCps();
-                        if (namevalue == "51fanli" && _system["open51fanli"] == "1")//从51fanli来的
+                        if (namevalue == "360" && PageValue.CurrentSystemConfig["open360"] == "1")//360来的
+                        {
+                            int bid = Helper.GetInt(cps.Values["bid"], 0);
+                            string qihoo_id = Helper.GetString(cps.Values["qihoo_id"], String.Empty);
+                            string ext = Helper.GetString(cps.Values["ext"], String.Empty);
+                            string qid = cps.Values["qid"];
+                            IList<Hashtable> cpslist = null;
+                            using (IDataSession session = Store.OpenSession(false))
+                            {
+                                cpslist = session.Custom.Query("select channelid,[order_id] from cps where channelid='360' and  [order_id] =" + orderid);
+                            }
+                            if (cpslist == null || cpslist.Count == 0)
+                            {
+                                ordermodel.fromdomain = "360cps";
+                                ordermodel.Pay_time = DateTime.Now;
+                                cpsmodel.channelId = namevalue;
+                                cpsmodel.u_id = bid;
+                                cpsmodel.order_id = ordermodel.Id;
+                                cpsmodel.result = ext;
+                                cpsmodel.value1 = qid;
+                                cpsmodel.username = qihoo_id;
+                                using (IDataSession session = Store.OpenSession(false))
+                                {
+                                    session.Cps.Insert(cpsmodel);
+                                }
+                            }
+                        }
+                        else if (namevalue == "51fanli" && PageValue.CurrentSystemConfig["open51fanli"] == "1")//从51fanli来的
                         {
                             int u_id = Helper.GetInt(cps.Values["u_id"], 0); //51返利传过来的用户Id
                             string username = Helper.GetString(cps.Values["username"], String.Empty);
@@ -417,7 +444,7 @@
                                 session.Cps.Insert(cpsmodel);
                             }
                         }
-                        else if (namevalue == "linktech" && _system["openlinktech"] == "1") //从linktech来的
+                        else if (namevalue == "linktech" && PageValue.CurrentSystemConfig["openlinktech"] == "1") //从linktech来的
                         {
                             try
                             {
@@ -456,7 +483,7 @@
                             catch (Exception ex) { WebUtils.LogWrite("linktechcps", ex.Message); }
 
                         }
-                        else if (namevalue == "tuanmatuanba" && _system["opentmtb"] == "1") //从团妈团爸来的
+                        else if (namevalue == "tuanmatuanba" && PageValue.CurrentSystemConfig["opentmtb"] == "1") //从团妈团爸来的
                         {
                             try
                             {
@@ -484,7 +511,7 @@
                             }
                             catch (Exception ex) { WebUtils.LogWrite("团吧团妈cps", ex.Message); }
                         }
-                        else if (namevalue == "yotao" && _system["openyotao"] == "1") //从yotao来的
+                        else if (namevalue == "yotao" && PageValue.CurrentSystemConfig["openyotao"] == "1") //从yotao来的
                         {
                             try
                             {
@@ -503,7 +530,7 @@
                             }
                             catch (Exception ex) { WebUtils.LogWrite("yotaocps", ex.Message); }
                         }
-                        else if (namevalue == "tpycps" && _system["opentpy"] == "1")  //来自太平洋CPS
+                        else if (namevalue == "tpycps" && PageValue.CurrentSystemConfig["opentpy"] == "1")  //来自太平洋CPS
                         {
                             try
                             {
@@ -542,7 +569,7 @@
                             }
                             catch (Exception ex) { WebUtils.LogWrite("tpycps", ex.Message); }
                         }
-                        else if (namevalue == "youhua")//来自优哈联盟
+                        else if (namevalue == "youhua" && PageValue.CurrentSystemConfig["openyouhua"] == "1")//来自优哈联盟
                         {
                             try
                             {
@@ -560,7 +587,7 @@
                             }
                             catch (Exception ex) { WebUtils.LogWrite("youhuacps", ex.Message); }
                         }
-                        else if (namevalue == "renrenzhe")//人人折
+                        else if (namevalue == "renrenzhe" && PageValue.CurrentSystemConfig["openrenrenzhe"] == "1")//人人折
                         {
                             int u_id = Helper.GetInt(cps.Values["u_id"], 0); //人人折返利传过来的用户Id
                             string uname = Helper.GetString(cps.Values["uname"], String.Empty);
@@ -1235,7 +1262,7 @@
                                       <%}
                                       else//开启余额秒杀
                                       { %>
-                                      <%if (user.Money > ordermodel.Origin)
+                                      <%if (user.Money >= ordermodel.Origin)
                                         { %>
                                       <input type="hidden" name="paytype"  value="credit" />
                                             您的余额足够本次购买，请直接确认订单，完成付款。

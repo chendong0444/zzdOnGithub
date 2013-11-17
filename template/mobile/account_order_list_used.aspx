@@ -1,13 +1,10 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     protected string pagerhtml = string.Empty;
@@ -65,7 +62,7 @@
             if (state == "pay" || state == "unpay" || state == "nocod" || state == "refund" || state == "cancel")
             {
                 HtmlBuilder.AppendFormat("<a href='{0}'>", GetUrl("手机版个人中心订单详情", "account_orders_view.aspx?id=" + orderid));
-                HtmlBuilder.AppendFormat("<img src='{0}' alt='{1}' width='122' height='74'/>", PageValue.CurrentSystem.domain + WebRoot + (teammodel.PhoneImg == null ? String.Empty : teammodel.PhoneImg), teammodel.Product);
+                HtmlBuilder.AppendFormat("<img src='{0}' alt='{1}' width='122' height='74'/>", TeamMethod.GetWapImgUrl(teammodel.PhoneImg), teammodel.Product);
                 HtmlBuilder.AppendFormat("<h3>{0}</h3>", teammodel.Product);
                 HtmlBuilder.Append("<ul>");
                 HtmlBuilder.Append("<li>已支付</li>");
@@ -95,7 +92,7 @@
                         {
                             HtmlBuilder.AppendFormat("<a href='{0}'>", GetUrl("手机版个人中心订单详情", "account_orders_view.aspx?id=" + orderid));
                         }
-                        HtmlBuilder.AppendFormat("<img src='{0}' alt='{1}' width='122' height='74'/>", PageValue.CurrentSystem.domain + WebRoot + (teammodel.PhoneImg == null ? String.Empty : teammodel.PhoneImg), teammodel.Product);
+                        HtmlBuilder.AppendFormat("<img src='{0}' alt='{1}' width='122' height='74'/>", TeamMethod.GetWapImgUrl(teammodel.PhoneImg), teammodel.Product);
                         HtmlBuilder.AppendFormat("<h3>{0}</h3>", Helper.GetSubString(teammodel.Product, 65));
                         HtmlBuilder.Append("<ul>");
                         HtmlBuilder.Append("<li>已支付</li>");

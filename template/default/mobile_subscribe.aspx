@@ -64,8 +64,7 @@
                 }
                 if (smsDetailmodel != null)
                 {
-                    //Response.Write("<script language='javascript'>alert('该项目已经订阅，请订阅其他项目！');location.href='/mobile_subscribe.aspx?id=" + strteamid + "';<"+"/script>\r\n");
-                    Response.Write("ssssss");
+                    Response.Write("<script language='javascript'>alert('该项目已经订阅，请订阅其他项目！');location.href='/mobile_subscribe.aspx?id=" + strteamid + "';<"+"/script>\r\n");
                 }
                 else
                 {

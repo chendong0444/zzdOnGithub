@@ -18,10 +18,14 @@
     protected string editid = String.Empty;
     protected string cityid="0";
     protected string citypid ="0";
-
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         AreaFilter areafilter = new AreaFilter();
         if (Request["zone"] != null)
         {
@@ -29,12 +33,12 @@
             {
                 if (Request["cityids"] != null)
                 {
-                    //ids = AsAdmin.City_id.ToString();
+                    //ids = usernew.City_id.ToString();
                     ids = Request["cityids"].ToString();
                 }
                 else
                 {
-                    ids = AsAdmin.City_id.ToString();
+                    ids = usernew.City_id.ToString();
                 }
                 if (Request["edit"] != null && Request["edit"].ToString() != String.Empty)
                 {

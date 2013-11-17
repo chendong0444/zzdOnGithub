@@ -3,6 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<meta name="google-site-verification" content="lDhj_7iFDhoqxBQZL2wQgjvY75zTrWL-jjVO-2i_OGI" />
 <meta name="keywords" content="<%=PageValue.KeyWord %>"/>
 <meta name="description" content="<%=PageValue.Description %>" />
 <script type='text/javascript' src="<%=PageValue.WebRoot %>upfile/js/index.js"></script>

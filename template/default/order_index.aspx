@@ -1,14 +1,14 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
 
 <%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="System" %>
 <%@ Import Namespace="AS.Common" %>
-<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
+<%@ Import Namespace="AS.Common.Utils" %>
+<%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     public bool result = false;//是否过期
@@ -26,6 +26,7 @@
     IList<IOrderDetail> detaillist = null;
     protected NameValueCollection _system = new NameValueCollection();
     ITeam teammodel = null;
+    protected bool isconsume = false;
     protected override void OnLoad(EventArgs e)
     {
         _system = PageValue.CurrentSystemConfig;// 得到系统配置表信息
@@ -80,6 +81,19 @@
         {
             if (orderimode.User_id == AsUser.Id)
             {
+                IList<Hashtable> cpslist = null;
+                using (IDataSession session = Store.OpenSession(false))
+                {
+                    cpslist = session.Custom.Query("select channelid,[order_id] from cps where channelid='360' and  [order_id] =" + orderid);
+                }
+                if (cpslist != null && cpslist.Count > 0)
+                {
+                    orderimode.Pay_time = DateTime.Now;
+                    using (IDataSession session = Store.OpenSession(false))
+                    {
+                        session.Orders.Update(orderimode);
+                    }
+                }
                 ActionHelper.User_CancelOrder(orderimode, teamid);
                 SetSuccess("友情提示：删除成功");
             }
@@ -381,6 +395,28 @@
         }
         return strNewUrl;
     }
+
+    protected bool isConsume(int strOrderid)
+    {
+        IList<ICoupon> listcoupon = null;
+        CouponFilter cfilter = new CouponFilter();
+        cfilter.Order_id = strOrderid;
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            listcoupon = session.Coupon.GetList(cfilter);
+        }
+        if (listcoupon != null && listcoupon.Count > 0)
+        {
+            for (int i = 0; i < listcoupon.Count; i++)
+            {
+                if (listcoupon[i].Consume == "N")
+                {
+                    isconsume = true;
+                }
+            }
+        }
+        return isconsume;
+    }
 </script>
 <%LoadUserControl("_htmlheader.ascx", null); %>
 <%LoadUserControl("_header.ascx", null); %>
@@ -521,31 +557,36 @@
                                                {
                                                    if (ordermod.rviewstate == 0)
                                                    {
-                                                       using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+                                                       isconsume = isConsume(ordermod.Id);
+                                                       if (isconsume == true)
                                                        {
-                                                           teammodel = session.Teams.GetByID(ordermod.Team_id);
-                                                       }
-
-                                                       DateTime days = Helper.GetDateTime(ordermod.Pay_time, DateTime.Now).AddDays(7);
-                                                       if (teammodel != null)
-                                                       {
-                                                           if (teammodel.Delivery == "coupon" && days > DateTime.Now)
+                                                           using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
                                                            {
-                                                               if (teammodel.isrefund == "S" || teammodel.isrefund == "Y")
+                                                               teammodel = session.Teams.GetByID(ordermod.Team_id);
+                                                           }
+
+                                                           DateTime days = Helper.GetDateTime(ordermod.Pay_time, DateTime.Now).AddDays(7);
+                                                           if (teammodel != null)
+                                                           {
+                                                               if (teammodel.Delivery == "coupon" && days > DateTime.Now)
+                                                               {
+                                                                   if (teammodel.isrefund == "S" || teammodel.isrefund == "Y")
+                                                                   {%>
+                                                    | <a class="ajaxlink" href="<%=PageValue.WebRoot%>ajax/Refund_like_manage.aspx?action=Refundreview&userid=<%=ordermod.User_id %>&id=<%=ordermod.Id %>&pagenum=<%=pagenum%>">退款申请</a>
+                                                        <% }
+                                                        %>
+                                                        <%  }
+                                                               else if (teammodel.Delivery == "coupon" && teammodel.isrefund == "G")
                                                                {%>
-                                        | <a class="ajaxlink" href="<%=PageValue.WebRoot%>ajax/Refund_like_manage.aspx?action=Refundreview&userid=<%=ordermod.User_id %>&id=<%=ordermod.Id %>&pagenum=<%=pagenum%>">退款申请</a>
-                                            <% }
-                                            %>
-                                            <%  }
-                                                       else if (teammodel.Delivery == "coupon" && teammodel.isrefund == "G")
-                                                       {%>
-                                        | <a class="ajaxlink" href="<%=PageValue.WebRoot%>ajax/Refund_like_manage.aspx?action=Refundreview&userid=<%=ordermod.User_id %>&id=<%=ordermod.Id %>&pagenum=<%=pagenum%>">退款申请</a>
-                                            <% }
-                                                       else if (teammodel.Delivery == "coupon" && teammodel.isrefund == "Y")
-                                                       {%>
-                                        | <a class="ajaxlink" href="<%=PageValue.WebRoot%>ajax/Refund_like_manage.aspx?action=Refundreview&userid=<%=ordermod.User_id %>&id=<%=ordermod.Id %>&pagenum=<%=pagenum%>">退款申请</a>
-                                            <%}
-                                                   }
+                                                    | <a class="ajaxlink" href="<%=PageValue.WebRoot%>ajax/Refund_like_manage.aspx?action=Refundreview&userid=<%=ordermod.User_id %>&id=<%=ordermod.Id %>&pagenum=<%=pagenum%>">退款申请</a>
+                                                        <% }
+                                                               else if (teammodel.Delivery == "coupon" && teammodel.isrefund == "Y")
+                                                               {%>
+                                                    | <a class="ajaxlink" href="<%=PageValue.WebRoot%>ajax/Refund_like_manage.aspx?action=Refundreview&userid=<%=ordermod.User_id %>&id=<%=ordermod.Id %>&pagenum=<%=pagenum%>">退款申请</a>
+                                                        <%}
+                                                           }
+                                                       }
+                                                     
                                                }
                                                else
                                                {
@@ -593,6 +634,7 @@
                                                {
                                                    if (ordermod.rviewstate == 0)
                                                    {
+                                                       
                                                        DateTime days = Helper.GetDateTime(ordermod.Pay_time, DateTime.Now).AddDays(7);
                                                        if (teammodel != null)
                                                        {

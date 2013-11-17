@@ -13,6 +13,11 @@
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+        IUser usernew = AS.GroupOn.App.Store.CreateUser();
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         id = AS.Common.Utils.Helper.GetInt(Request["remove"], 0);
             if (id > 0)
             {
@@ -52,7 +57,7 @@
         filter.PageSize = 30;
         filter.CurrentPage=AS.Common.Utils.Helper.GetInt(Request.QueryString["page"],1);
         filter.AddSortOrder(MailerFilter.ID_DESC);
-        filter.City_id = AsAdmin.City_id;
+        filter.City_id = usernew.City_id;
         using(IDataSession session = AS.GroupOn .App .Store .OpenSession(false))
         {
             pager = session .Mailers .GetPager(filter);

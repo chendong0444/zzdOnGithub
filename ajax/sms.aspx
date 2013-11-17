@@ -320,10 +320,13 @@
                     {
                         userlist = session.Users.GetList(ufilter);
                     }
-                    if (userlist == null || userlist.Count == 0)
+                    if (Request["method"] == "login")
                     {
-                        Response.Write("4");
-                        Response.End();
+                        if (userlist == null || userlist.Count == 0)
+                        {
+                            Response.Write("4");
+                            Response.End();
+                        }
                     }
                     List<string> mobile_sub = new List<string>();
                     mobile_sub.Add(mobile);

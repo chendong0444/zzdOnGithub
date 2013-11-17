@@ -14,10 +14,14 @@
     protected string type = "";
     protected string Name = "";
     protected int id = 0;
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         CategoryFilter filter = new CategoryFilter();
         filter.Zone = "city";
         if (Request.QueryString["id"] != null && Request["id"].ToString() != "")
@@ -27,7 +31,7 @@
         }
         else
         {
-            filter.Id = AsAdmin.City_id;
+            filter.Id = usernew.City_id;
         }
 
 

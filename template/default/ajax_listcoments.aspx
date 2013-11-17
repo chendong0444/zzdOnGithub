@@ -34,7 +34,7 @@
                 {
                     _system = new NameValueCollection();
                     _system = AS.Common.Utils.WebUtils.GetSystem();
-                    string result = AS.Common.Utils.ActionHelper.User_ReView(0, "team", Request.QueryString["content"].ToString(), Convert.ToInt32(Request.QueryString["uid"].ToString()), Convert.ToInt32(Request.QueryString["Id"].ToString()), _system);
+                    string result = AS.Common.Utils.ActionHelper.User_ReView(0, "team", Server.HtmlEncode(Request.QueryString["content"].ToString()), Convert.ToInt32(Request.QueryString["uid"].ToString()), Convert.ToInt32(Request.QueryString["Id"].ToString()), _system);
                     if (result == "")
                     {
                         SetSuccess("提交成功");
@@ -90,7 +90,7 @@
                 {
                     _system = new NameValueCollection();
                     _system = AS.Common.Utils.WebUtils.GetSystem();
-                    string result = AS.Common.Utils.ActionHelper.User_ReViewP(score, int.Parse(isGo), "partner", Request.QueryString["content"].ToString(), Convert.ToInt32(Request.QueryString["uid"].ToString()), Convert.ToInt32(Request.QueryString["pid"].ToString()), Convert.ToInt32(Request.QueryString["id"].ToString()), _system);
+                    string result = AS.Common.Utils.ActionHelper.User_ReViewP(score, int.Parse(isGo), "partner", Server.HtmlEncode(Request.QueryString["content"].ToString()), Convert.ToInt32(Request.QueryString["uid"].ToString()), Convert.ToInt32(Request.QueryString["pid"].ToString()), Convert.ToInt32(Request.QueryString["id"].ToString()), _system);
                     if (result == "")
                     {
                         SetSuccess("提交成功");

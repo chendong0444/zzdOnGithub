@@ -224,6 +224,7 @@
                         if (ordermodel.OrderDetail != null && ordermodel.OrderDetail.Count > 0)
                         {
                             //判断项目是否过期或者卖光
+                            string str;
                             this.txtremark.Value = ordermodel.Remark;
                             foreach (var model in ordermodel.OrderDetail)
                             {
@@ -231,6 +232,32 @@
                                 team = model.Team;
                                 if (team != null)
                                 {
+                                    if (team.inventory > 0)
+                                    {
+                                        if (model.result != "" && model.result != null)
+                                        {
+                                            string reslut = Utility.GetOrderrule(model.result, team.invent_result, 0);
+                                            string[] resluts = reslut.Split('|');
+                                            for (int i = 0; i < resluts.Length; i++)
+                                            {
+                                                str = Utilys.GetNumByResult(resluts[i]);
+                                                if (str.Contains("-"))
+                                                {
+                                                    SetError("友情提示：订单中数量已超出项目库存，不能支付！");
+                                                    Response.Redirect(WebRoot + "index.aspx");
+                                                    Response.End();
+                                                    return;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        SetError("友情提示：订单中存在已卖光的项目，不能支付！");
+                                        Response.Redirect(WebRoot + "index.aspx");
+                                        Response.End();
+                                        return;
+                                    }
                                     AS.Enum.TeamState ts = GetState(team);
                                     if (team.teamcata == 0)
                                     {
@@ -936,6 +963,7 @@
                 <div class="clr"></div>
             </div>
             <div class="List_cart marginb10" id="show" name="show">
+                <input type="hidden" name="county" id="county" />
                 <asp:HiddenField ID="hiorderid" runat="server" />
                 <script type="text/javascript">
                     function changecity(pid) { 

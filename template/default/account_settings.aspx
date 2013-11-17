@@ -218,7 +218,7 @@
                         return;
                     }
                     else
-                        m_user.Email = email;
+                        m_user.Email = Server.HtmlEncode(email);
                 }
             }
 
@@ -295,7 +295,7 @@
             m_user.Realname = Server.HtmlEncode(Request.Form["realname"]);
             m_user.Address = Server.HtmlEncode(Request.Form["address"]);
             m_user.City_id = Helper.GetInt(Request["city_id"], 0);
-            m_user.Gender = Request["gender"];
+            m_user.Gender = Server.HtmlEncode(Request["gender"]);
             int r = 0;
             using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
             {

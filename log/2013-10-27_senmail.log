@@ -1,0 +1,28 @@
+a      -----2013-10-27 13:58:29
+aa      -----2013-10-27 13:58:29
+aaa      -----2013-10-27 13:58:29
+a11aa      -----2013-10-27 13:58:29
+aaaa      -----2013-10-27 13:58:29
+1      -----2013-10-27 13:58:29
+aaaaa      -----2013-10-27 13:58:29
+select top 300  u.[Id] as uid , m.Email,m.id from mailer m inner join [user] u on m.email=u.email where m.Email like '%@gmail.com'  and (sendmailids is null or sendmailids not like '%,2,%')      -----2013-10-27 13:58:29
+222      -----2013-10-27 13:58:29
+True      -----2013-10-27 13:58:29
+select top 300  u.[Id] as uid , m.Email,m.id from mailer m inner join [user] u on m.email=u.email where m.Email like '%@gmail.com'  and (sendmailids is null or sendmailids not like '%,2,%')      -----2013-10-27 13:58:29
+22      -----2013-10-27 13:58:29
+5555      -----2013-10-27 13:58:29
+888      -----2013-10-27 13:58:29
+a      -----2013-10-27 14:31:17
+aa      -----2013-10-27 14:31:17
+aaa      -----2013-10-27 14:31:17
+a11aa      -----2013-10-27 14:31:17
+aaaa      -----2013-10-27 14:31:17
+1      -----2013-10-27 14:31:17
+aaaaa      -----2013-10-27 14:31:17
+select top 300  u.[Id] as uid , m.Email,m.id from mailer m inner join [user] u on m.email=u.email where m.Email like '%@gmail.com'  and (sendmailids is null or sendmailids not like '%,2,%')      -----2013-10-27 14:31:17
+222      -----2013-10-27 14:31:17
+True      -----2013-10-27 14:31:17
+select top 300  u.[Id] as uid , m.Email,m.id from mailer m inner join [user] u on m.email=u.email where m.Email like '%@gmail.com'  and (sendmailids is null or sendmailids not like '%,2,%')      -----2013-10-27 14:31:17
+22      -----2013-10-27 14:31:17
+5555      -----2013-10-27 14:31:17
+888      -----2013-10-27 14:31:17

@@ -19,9 +19,14 @@
     protected CouponFilter filter = new CouponFilter();
 
     private NameValueCollection _system = new NameValueCollection();
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         //判断管理员是否有此操作
         if (AdminPage.IsAdmin && AdminPage.CheckUserOptionAuth(PageValue.CurrentAdmin, ActionEnum.Option_Coupon_ListView))
         {
@@ -161,7 +166,7 @@
         filter.FromExpire_time = DateTime.Now;
         filter.AddSortOrder(CouponFilter.Create_time_DESC);
         filter.CurrentPage = AS.Common.Utils.Helper.GetInt(Request.QueryString["page"], 1);
-        filter.inOrder_id = AsAdmin.City_id;
+        filter.inOrder_id = usernew.City_id;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             pager = session.Coupon.GetPager(filter);
@@ -288,7 +293,7 @@
                                 values.Add("消费时间", coupon.Consume_time.ToString());
                                 string message = ReplaceStr("consumption", values);
                                 phone.Add(user.Mobile);
-                                ChinaNetSMSWraper.SendSMS(phone, message);
+                                EmailMethod.SendSMS(phone, message);
                                 //提示尊敬的{网站简称}用户{用户名}您的券号{券号}已于{消费时间}被消费。
                             }
                         }

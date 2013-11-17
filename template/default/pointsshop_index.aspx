@@ -333,7 +333,7 @@
             else
             {
 
-                string str = UserReview.User_ReView(0, null, txtremark, userid, teamid, _system);
+                string str = UserReview.User_ReView(0, null, Server.HtmlEncode(txtremark), userid, teamid, _system);
                 if (str == "")
                 {
                     SetSuccess("发表成功!");
@@ -779,7 +779,7 @@
                                                             %>
                                                             <div class="comments">
                                                                 <div class="deal_pic">
-                                                                    <a href="<%=getTeamPageUrl(int.Parse(review.review_teamid.ToString()))%>" target="_blank">
+                                                                    <a href="<%=getTeamPageUrl(Helper.GetInt(review.review_teamid.ToString(),0))%>" target="_blank">
                                                                         <img <%=ashelper.getimgsrc(review.Image) %> class="dynload" width="110" height="70"
                                                                             border="0" />
                                                                     </a>

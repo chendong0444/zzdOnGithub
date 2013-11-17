@@ -38,9 +38,14 @@
     public ISystem system = null;
     public NameValueCollection _system = null;
     ITeam team = AS.GroupOn.App.Store.CreateTeam();
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         _system = AS.Common.Utils.WebUtils.GetSystem();
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
@@ -250,10 +255,10 @@
         }
         //添加城市
         ICategory cateby = null;
-        string s = AsAdmin.City_id.ToString();
+        string s = usernew.City_id.ToString();
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
-            cateby = session.Category.GetByID(AsAdmin.City_id);
+            cateby = session.Category.GetByID(usernew.City_id);
         }
         if (cateby!=null)
         {
@@ -429,8 +434,8 @@
     private void addContent()
     {
         string createUpload = "";
-       
-        team.User_id = AdminPage.AsAdmin.Id;
+
+        team.User_id = PageValue.CurrentAdmin.Id;
         if (projectType.Value != "")
         {
             team.Team_type = projectType.Value;
@@ -444,7 +449,7 @@
         {
             team.Group_id = int.Parse(Request.Form["groupType"].ToString());
         }
-        team.City_id = AsAdmin.City_id;
+        team.City_id = usernew.City_id;
         team.catakey = Request["birds"];
         team.cataid = AS.Common.Utils.Helper.GetInt(Request["parent"], 0);//项目分类的编号
         team.commentscore = AS.Common.Utils.Helper.GetDecimal(commentscore.Value, 0);//评论返利的金额

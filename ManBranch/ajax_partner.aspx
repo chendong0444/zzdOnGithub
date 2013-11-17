@@ -62,7 +62,7 @@
                             listrefundteams.Add(rt);
                         }
                     }
-                    string result = AS.AdminEvent.OrderEvent.Refund_Apply(orderid, listrefundteams, refundmoney, reason, AsAdmin.Id, DateTime.Now, refundtype);
+                    string result = AS.AdminEvent.OrderEvent.Refund_Apply(orderid, listrefundteams, refundmoney, reason, PageValue.CurrentAdmin.Id, DateTime.Now, refundtype);
                     if (result.Length > 0)
                         Response.Write(JsonUtils.GetJson("alert('" + result + "');", "eval"));
                     else

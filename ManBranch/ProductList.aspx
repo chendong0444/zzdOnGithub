@@ -13,10 +13,14 @@
     protected IList<IProduct> iListProduct = null;
     protected string pagerHtml = String.Empty;
     protected string url = "";
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-      
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         ProductFilter filter = new ProductFilter();
 
         if (this.partnerid.Text != null && this.partnerid.Text != "" || Request["partnerid"] != "")
@@ -96,7 +100,7 @@
         filter.PageSize = 30;
         filter.AddSortOrder(ProductFilter.SORTORDER_DESC);
         filter.CurrentPage = AS.Common.Utils.Helper.GetInt(Request.QueryString["page"], 1);
-        filter.inpartnerId = AsAdmin.City_id;
+        filter.inpartnerId = usernew.City_id;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             pager = session.Product.GetPager(filter);

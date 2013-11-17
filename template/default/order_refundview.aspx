@@ -45,7 +45,7 @@
             return;
         }
         ordermodel.rviewstate = 1;
-        ordermodel.userremarke = Helper.GetString(Request["remark"], String.Empty);
+        ordermodel.userremarke = Server.HtmlEncode(Helper.GetString(Request["remark"], String.Empty));
         int ires = 0;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {

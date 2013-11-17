@@ -18,13 +18,24 @@
     protected string orders = "";
     protected List<Hashtable> categoryModel = null;
     protected int countpage = 0;
+    IUser usernew = Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+
+       
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
+        
+        
+        
+        
+        
         PageValue.Title = "商户列表";
-   
         //判断管理员是否有此操作
-      
+     
         //用户等级
         string sql1 = "select u.*,c.Name,c.Display,c.Zone from userlevelrules u left join Category c on u.levelid =c.Id  ";
 
@@ -115,7 +126,7 @@
         filter.PageSize = 30;
         filter.AddSortOrder(orders);
         filter.CurrentPage = AS.Common.Utils.Helper.GetInt(Request.QueryString["page"], 1);
-        filter.City_id = AsAdmin.City_id.ToString();
+        filter.City_id = usernew.City_id.ToString();
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             pager = session.Users.GetPager(filter);

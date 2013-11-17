@@ -136,7 +136,7 @@
                             stContent.Append("<a target='_blank' href='" + getTeamPageUrl(int.Parse(ordeinfo.Teamid.ToString())) + "'>" + team.Title + "</a>");
                         }
 
-                        if (ordeinfo.result.ToString() == "")
+                        if (ordeinfo.result==null || ordeinfo.result.ToString() == "")
                         {
                             stContent.Append("</br>");
                         }
@@ -166,7 +166,7 @@
                     {
                         stContent.Append("<a target='_blank' href='" + getTeamPageUrl(Helper.GetInt(orinfo.Team_id.ToString(), 0)) + "'>" + team.Title + "</a>");
                     }
-                    if (orinfo.result.ToString() == "")
+                    if (orinfo.result==null || orinfo.result.ToString() == "")
                     {
                         stContent.Append("</br>");
                     }

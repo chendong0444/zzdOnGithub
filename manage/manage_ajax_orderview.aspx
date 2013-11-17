@@ -196,20 +196,24 @@
             {
                 express_no = Request["express_no"];
             }
-            IOrder orders = Store.CreateOrder();
+            IOrder updateorders = null;
             using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
             {
-                orders = session.Orders.GetByID(int.Parse(orderid));
+                updateorders = session.Orders.GetByID(int.Parse(orderid));
+                if (updateorders != null)
+                {
+                    updateorders.Express_id = Convert.ToInt32(expressid);
+                    updateorders.Express_no = express_no;
+                    updateorders.Express = "Y";
+                    session.Orders.Update(updateorders);
+                    Response.Write(JsonUtils.GetJson("alert('修改快递信息成功!');window.location.reload();", "eval"));
+                }
+                else
+                {
+                    Response.Write(JsonUtils.GetJson("alert('修改快递信息失败!');window.location.reload();", "eval"));
+                }
+                Response.End();
             }
-            orders.Express_id = Convert.ToInt32(expressid);
-            orders.Express_no = express_no;
-            orders.Express = "Y";
-            using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
-            {
-                session.Orders.Update(orders);
-            }
-            Response.Write(JsonUtils.GetJson("alert('修改快递信息成功!');window.location.reload();", "eval"));
-            Response.End();
         }
     }
 </script>

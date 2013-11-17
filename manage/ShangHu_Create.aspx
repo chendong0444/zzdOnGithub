@@ -239,7 +239,8 @@
             partner.Bank_user = Helper.GetString(Request["bank_user"], String.Empty);
             partner.Bank_no = Helper.GetString(Request["bank_no"], String.Empty);
             partner.Create_time = DateTime.Now;
-            partner.saleid = "";
+            partner.saleid = "0";
+            partner.sale_id = "0";
             if (string.IsNullOrEmpty(Request["username"]) || string.IsNullOrEmpty(Request["password"]) || string.IsNullOrEmpty(Request["shanghuxiu"]) || string.IsNullOrEmpty(Request["title"]) || string.IsNullOrEmpty(Request["title"]) || string.IsNullOrEmpty(Request["address"]))
             {
                 SetError("商家信息不完整");

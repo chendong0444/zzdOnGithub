@@ -156,7 +156,7 @@
             if (!String.IsNullOrEmpty(part.point) && part.point.IndexOf(",") >= 0)
             {
                 string[] points = part.point.Split(',');
-                mapInfo = "{\"title\":\"" + part.Title + "\", \"address\": \"" + part.Address + "\", \"tel\": \"" + part.Phone + "\", \"lng\": \"" + points[1] + "\", \"lat\": \"" + points[0] + "\"}";
+                mapInfo = "{\"name\":\"" + part.Title + "\", \"address\": \"" + part.Address + "\", \"tel\": \"" + part.Phone + "\", \"point\": \"" + points[1] + "," + points[0] + "\",\"citycode\":131}";
 
             }
             BranchFilter bf = new BranchFilter();
@@ -172,7 +172,7 @@
                     if (!String.IsNullOrEmpty(item.point) && item.point.IndexOf(",") >= 0)
                     {
                         string[] points = item.point.Split(',');
-                        mapInfo = mapInfo + ",{\"title\":\"" + item.branchname + "\", \"address\": \"" + item.address + "\", \"tel\": \"" + item.phone + "\", \"lng\": \"" + points[1] + "\", \"lat\": \"" + points[0] + "\"}";
+                        mapInfo = mapInfo + ",{\"name\":\"" + item.branchname + "\", \"address\": \"" + item.address + "\", \"tel\": \"" + item.phone + "\", \"point\": \"" + points[1] + "," + points[0] + "\",\"citycode\":131}";
                     }
                 }
             }
@@ -1299,25 +1299,12 @@
 </div>
 <%if (canLoadMap && mapInfo != String.Empty)
   {%>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2"></script>
 <script type='text/javascript'>
-    var poiData = [<%=mapInfo %>];
-    //初始化团购控件
-    var gp = new BMapGP.GroupPurchase("container", {
-        //启用附近公交/地铁路线功能 
-        enableRouteInfo: true,
-        //启用从这里来/到这里去 公交路线搜索功能 
-        //enableRouteSearchBox: true,
-        //是否启用展开第一个结果 
-        selectFirstResult: true,
-        //地图类型 JS_MAP为js类型地图，STATIC_MAP为静态图, IFRAME_MAP为嵌入IFRAME类型
-        type: JS_MAP,
-        //地图缩放级别，如果多点情况，插件会自动缩放级别，将所有点显示在视野内
-        zoom: 11,
-        //地图大小 
-        mapSize: { width: 205, height: 210 },
-        pois: poiData
-    });
+    var BAIDUMAPCONTENT = "container";
+    var BAIDUPOINTS = [<%=mapInfo %>];
 </script>
+<script type="text/javascript" src="/upfile/js/baiduMap.js"></script>
 <%}%>
 <script type="text/javascript" language="javascript">
     $(document).ready(function () {

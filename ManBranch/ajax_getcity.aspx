@@ -17,9 +17,14 @@
     protected string html1 = String.Empty;
     protected CategoryFilter category = new CategoryFilter();
     protected IList<ICategory> listCategory = null;
+    IUser usernew = Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         string strLetter = AS.Common.Utils.Helper.GetString(Request["letter"], String.Empty);
         string id = AS.Common.Utils.Helper.GetString(Request["pid"], String.Empty);
         if (id != String.Empty)
@@ -104,7 +109,7 @@
         category.Zone = "city";
         category.Display = "Y";
         category.City_pid = 0;
-        category.Id = AsAdmin.City_id;
+        category.Id = usernew.City_id;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             listCategory = session.Category.GetList(category);
@@ -160,7 +165,7 @@
         category1.City_pid = pid;
         if (id=="0")
         {
-            category1.Id = AsAdmin.City_id;
+            category1.Id = usernew.City_id;
         }
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {

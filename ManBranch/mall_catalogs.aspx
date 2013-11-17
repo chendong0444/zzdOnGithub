@@ -19,9 +19,14 @@
     protected System.Data.DataTable catalogsdt = null;
     protected IList<ICatalogs> catalogslist = null;
     protected StringBuilder sb2 = new StringBuilder();
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         //分类
         CatalogsFilter catalogsfilter = new CatalogsFilter();
 
@@ -67,7 +72,7 @@
         catalogsfilter.PageSize = 30;
         catalogsfilter.AddSortOrder(CatalogsFilter.Sort_Order_ASC);
         catalogsfilter.CurrentPage = AS.Common.Utils.Helper.GetInt(Request.QueryString["page"], 1);
-        catalogsfilter.cityid =","+AsAdmin.City_id.ToString()+",";
+        catalogsfilter.cityid =","+usernew.City_id.ToString()+",";
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             pager = session.Catalogs.GetPager(catalogsfilter);

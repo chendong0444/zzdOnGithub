@@ -711,50 +711,25 @@
             <% 
               if (ds.TeamCatalogs != null)
               {
-
-                  CatalogsFilter catafilter = new CatalogsFilter();
-                  catafilter.Where = " ids like'%" + ds.TeamCatalogs.id + "%' or id=" + ds.TeamCatalogs.id;
-                  IList<ICatalogs> ilistcata = null;
-                  using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+                  ICatalogs catalog = null;
+                  ICatalogs partnercata = null;
+                  if (ds.TeamCatalogs.id!=0)
                   {
-                      ilistcata = session.Catalogs.GetList(catafilter);
-                  }
-                  if (ilistcata != null)
-                  {
-                      string id = string.Empty;
-                      foreach (ICatalogs cata in ilistcata)
+                      using (IDataSession session =Store.OpenSession(false))
                       {
-                          if (cata.parent_id == 0)
-                          {%>
-            <em>&gt;</em><a href="<%=GetTeamListPageUrl(cata.id, 0,0, 0, 0, 0,0, String.Empty)%>"><%=cata.catalogname%></a>
-            <%
-                              id = cata.id.ToString();
-                          }
-                          if (cata.parent_id == ds.TeamCatalogs.parent_id)
-                          {
-                              ICatalogs catalogs = Store.CreateCatalogs();
-                              CatalogsFilter cafilter = new CatalogsFilter();
-                              cafilter.Where = "parent_id in (select id from catalogs where parent_id=0 and (ids like'%" + ds.TeamCatalogs.id + "%' or id=" + ds.TeamCatalogs.id + ")) and ids like '%" + ds.TeamCatalogs.id + "%'";
-                              using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
-                              {
-                                  catalogs = session.Catalogs.Get(cafilter);
-                              }
-                              if (catalogs != null)
-                              {%>
-            <em>&gt;</em><a href="<%=GetTeamListPageUrl(Helper.GetInt(id,0),catalogs.id,0, 0, 0, 0,0, String.Empty)%>"><%=catalogs.catalogname%></a>
-            <%}
-
-                          }
-
+                          catalog = session.Catalogs.GetByID(ds.TeamCatalogs.id);
                       }
-                      if (ds.TeamCatalogs.catalogname != "" && ds.TeamCatalogs.parent_id != 0)
+                      if (catalog.parent_id!=0)
                       {
-            %>
-            <em>&gt;</em><a href="<%=GetTeamListPageUrl(Helper.GetInt(id,0), Helper.GetInt(ds.cataid,0),0, 0, 0, 0,0,String.Empty)%>"><%=ds.TeamCatalogs.catalogname%></a>
-            <%}
-
-                  }
-              }
+                          using (IDataSession session = Store.OpenSession(false))
+                          {
+                              partnercata = session.Catalogs.GetByID(catalog.parent_id);
+                          }%>
+                          <em>&gt;</em><a href="<%=GetTeamListPageUrl(partnercata.id, 0,0, 0, 0, 0,0, String.Empty)%>"><%=partnercata.catalogname%></a>
+                      <%}%>
+                      <em>&gt;</em><a href="<%=GetTeamListPageUrl(Helper.GetInt(partnercata.id,0),catalog.id,0, 0, 0, 0,0, String.Empty)%>"><%=catalog.catalogname%></a>
+                  <%}%>
+             <% }
             %>
             <em>&gt;</em><span class="lbrd_ltab" title="<%=teammodel.Title%>"><%=Helper.GetSubString(teammodel.Title, 28)%></span>
         </div>
@@ -1012,10 +987,10 @@
                                     }
                                     if(rule!="")
                                     {
-                                        $("#show_price").html("<%=ASSystemArr["Currency"]%>"+rule.substring(0,rule.indexOf(".") + 3));
+                                        $("#show_price").html("<%=ASSystemArr["Currency"]%>"+Math.round(rule*100)/100);
                                         var youhuimoney='<%=GetMoney(teammodel.Market_price) %>';
                                         var resultmoney=youhuimoney-rule;
-                                        $("#youhui").html("已优惠<%=ASSystemArr["Currency"]%>"+resultmoney.substring(0,resultmoney.indexOf(".") + 3));
+                                        $("#youhui").html("已优惠<%=ASSystemArr["Currency"]%>"+Math.round(resultmoney*100)/100);
                                     }
                                 }
                             }

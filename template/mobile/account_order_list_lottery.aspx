@@ -1,14 +1,10 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
 
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     protected ITeam teammodel = null;
@@ -50,7 +46,7 @@
                 }
                 if (teammodel != null)
                 {
-                    strhtml.AppendFormat("<img src='{0}' alt='{1}' width='122' height='74' />", PageValue.CurrentSystem.domain + WebRoot + (teammodel.PhoneImg == null ? String.Empty : teammodel.PhoneImg), teammodel.Product);
+                    strhtml.AppendFormat("<img src='{0}' alt='{1}' width='122' height='74' />", TeamMethod.GetWapImgUrl(teammodel.PhoneImg), teammodel.Product);
                     strhtml.Append("<h3>" + teammodel.Product + "</h3>");
                 }
                 strhtml.Append("<ul>");
@@ -110,7 +106,7 @@
                     <%=pagerhtml %>
                 </div>
                 <div id="nav-top">
-                    <span class="nav-button" onclick="javascript:void(window.scrollTo(0, 0));"><span>回到顶部</span></span>
+                    <span class="nav-button"><span>回到顶部</span></span>
                 </div>
             </nav>
 

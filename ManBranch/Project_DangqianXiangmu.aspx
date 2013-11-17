@@ -30,11 +30,16 @@
     protected ITeam teamodel = null;
     protected ICategory categorymodel = null;
     private string href = "";
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
         //判断管理员是否有此操作
-
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+           
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         _system = AS.Common.Utils.WebUtils.GetSystem();        
         TeamFilter filter = new TeamFilter();
         //分类的项目类型 0 团购;1 商城
@@ -182,7 +187,7 @@
         filter.ToBegin_time = DateTime.Now;
         filter.FromEndTime = DateTime.Now;
         filter.CurrentPage = AS.Common.Utils.Helper.GetInt(Request.QueryString["page"], 1);
-        filter.City_id = AsAdmin.City_id;
+        filter.City_id = usernew.City_id;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             pager = session.Teams.GetPager(filter);

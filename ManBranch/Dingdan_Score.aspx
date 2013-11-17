@@ -18,14 +18,18 @@
     protected int id = 0;
     protected string type_name = "";
     protected OrderFilter filter = new OrderFilter();
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         id = Helper.GetInt(Request["delete"], 0);
         if (id > 0)
         {
-            int adminid = Helper.GetInt(AsAdmin.Id, 0);
+            int adminid = Helper.GetInt(PageValue.CurrentAdmin.Id, 0);
             AS.AdminEvent.OrderEvent.Del_Order(adminid, id, Request.UrlReferrer.ToString());
         }
 
@@ -135,7 +139,7 @@
         filter.PageSize = 30;
         filter.AddSortOrder(OrderFilter.ID_DESC);
         filter.CurrentPage = AS.Common.Utils.Helper.GetInt(Request.QueryString["page"], 1);
-        filter.City_id = AsAdmin.City_id;
+        filter.City_id = usernew.City_id;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             pager = session.Orders.GetPager(filter);

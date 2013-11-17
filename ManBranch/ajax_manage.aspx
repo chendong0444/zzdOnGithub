@@ -148,7 +148,7 @@
         {
             string content = Helper.GetString(Request.Form["content"], String.Empty);
             string msg = String.Empty;
-            int adminid = Helper.GetInt(AsAdmin.Id, 0);
+            int adminid = Helper.GetInt(PageValue.CurrentAdmin.Id, 0);
             if (content.Length > 0 && adminid > 0)
             {
                 msg = AS.AdminEvent.OrderEvent.Manager_AddReMark(adminid, content, Helper.GetInt(id, 0));
@@ -171,7 +171,7 @@
         else if (action == "refunddel")//客服删除退款记录
         {
             int refundid = Helper.GetInt(Request.QueryString["rid"], 0);
-            int adminid = Helper.GetInt(AsAdmin.Id, 0);
+            int adminid = Helper.GetInt(PageValue.CurrentAdmin.Id, 0);
             IRefunds refunds = Store.CreateRefunds();
             using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
             {
@@ -186,7 +186,7 @@
         {
 
             int refundid = Helper.GetInt(Request.QueryString["rid"], 0);
-            int adminid = Helper.GetInt(AsAdmin.Id, 0);
+            int adminid = Helper.GetInt(PageValue.CurrentAdmin.Id, 0);
             string msg = AS.AdminEvent.OrderEvent.Refund_Receive(refundid, adminid, DateTime.Now);
             if (msg.Length == 0)//接受成功
             {
@@ -206,7 +206,7 @@
         else if (action == "refundover")
         {
             int refundid = Helper.GetInt(Request.Form["rid"], 0);
-            int adminid = Helper.GetInt(AsAdmin.Id, 0);
+            int adminid = Helper.GetInt(PageValue.CurrentAdmin.Id, 0);
             string remark = Request.Form["remark"];
             string result = AS.AdminEvent.OrderEvent.Refund_Confir(refundid, adminid, DateTime.Now, remark);
             if (result.Length == 0)//处理成功

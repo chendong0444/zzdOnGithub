@@ -403,7 +403,7 @@
                         return false;
                     }
                     else {
-                        window.location.href = '<%=GetUrl("邮件订阅", "help_Email_Subscribe.aspx")%>' + '?email=' + str;
+                        window.location.href = '<%=GetUrl("邮件订阅", "help_Email_Subscribe.aspx")%>' + '?email=' + encodeURIComponent(str);
                     }
                 }
             </script>

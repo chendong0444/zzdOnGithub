@@ -132,7 +132,7 @@
        
         url = url + "&page={0}";
         url = "DingDan_Shenghe.aspx?" + url.Substring(1);
-        filter.RviewstateIn = "'1','2','4'";
+        filter.RviewstateIn = "'1','4'";
         filter.State = "pay";
         filter.PageSize = 30;
         filter.AddSortOrder(OrderFilter.ID_DESC);

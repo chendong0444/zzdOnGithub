@@ -14,10 +14,14 @@
     protected IList<ICategory> iListCategory = null;
     protected string pagerHtml = String.Empty;
     protected string url = "";
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-     
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         
         CategoryFilter filter = new CategoryFilter();
         filter.Zone = "brand";
@@ -47,7 +51,7 @@
         filter.PageSize = 30;
         filter.AddSortOrder(CategoryFilter.Sort_Order_DESC);
         filter.CurrentPage = AS.Common.Utils.Helper.GetInt(Request.QueryString["page"], 1);
-        filter.City_pid = AsAdmin.City_id;
+        filter.City_pid = usernew.City_id;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             pager = session.Category.GetPager(filter);

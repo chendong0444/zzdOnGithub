@@ -1,13 +1,11 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+
+<%@ Import Namespace="AS.GroupOn.App" %>
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     public IList<IOrder> orderlist = null;
@@ -220,7 +218,6 @@
   {%>
 <div class="body">
     <div class="common-title">订单信息</div>
-
     <section class="common-items">
         <div class="common-item">
             <span class="item-label">项目：</span>
@@ -336,23 +333,23 @@
         <input type="hidden" name="cashierCode" checked="checked" value="" />
         <input type="hidden" name="paytype" value="credit" />
         <input type="hidden" name="paymoney" value="<%=needmoney%>"/>
-        <%if (PageValue.CurrentSystem != null && (!String.IsNullOrEmpty(PageValue.CurrentSystem.tenpaymid) || !String.IsNullOrEmpty(PageValue.CurrentSystem.alipaymid)))
+        <%if (PageValue.CurrentSystemConfig != null && (!String.IsNullOrEmpty(PageValue.CurrentSystemConfig["waptenpay_mid"]) || PageValue.CurrentSystemConfig["open_wap_alipay"] != "0"))
           {%>
         <div id="pay-methods-panel" class="pay-methods-panel">
             <div id="normal-fieldset" class="normal-fieldset">
                 <div class="common-title">选择支付方式</div>
                 <section class="common-items common-radio-box">
-                    <%if (PageValue.CurrentSystem!=null&&!String.IsNullOrEmpty(PageValue.CurrentSystem.tenpaymid)&&!String.IsNullOrEmpty(PageValue.CurrentSystem.tenpaysec))
+                    <%if (PageValue.CurrentSystemConfig != null && !String.IsNullOrEmpty(PageValue.CurrentSystemConfig["waptenpay_sec"]) && !String.IsNullOrEmpty(PageValue.CurrentSystemConfig["waptenpay_mid"]))
                       {%>
                      <div class="common-item">
-                        <label id="recentpay" class="needsfocus" data-banktype="tenpaywap" data-bankcode="">
+                        <label class="needsfocus">
                             <input type="radio" value="tenpaywap" checked="checked" name="paypath" />财付通支付</label>
                     </div>     
                      <%}%>
-                  <%if (PageValue.CurrentSystem!=null&&!String.IsNullOrEmpty(PageValue.CurrentSystem.alipaymid)&&!String.IsNullOrEmpty(PageValue.CurrentSystem.alipaysec))
+                  <%if (PageValue.CurrentSystem != null && PageValue.CurrentSystemConfig["open_wap_alipay"] != null && PageValue.CurrentSystemConfig["open_wap_alipay"] != "0" && !String.IsNullOrEmpty(PageValue.CurrentSystem.alipaymid) && !String.IsNullOrEmpty(PageValue.CurrentSystem.alipaysec))
                       {%>
                     <div class="common-item" >
-                        <label class="needsfocus" data-banktype="bank_type" data-bankcode="" onclick="">支付宝支付<input id="pay-alipayWap" type="radio" value="alipaywap" name="paypath" /></label>
+                        <label class="needsfocus">支付宝支付<input id="pay-alipayWap" type="radio" value="alipaywap" name="paypath" /></label>
                     </div>
                     <%} %>
                 </section>
@@ -373,9 +370,7 @@
             mtBalance = Number('<%=AsUser.Money%>'),
             totalPrice = Number('<%=totalprice%>'),
             needPay = Number('<%=needmoney%>'),
-            $errMsg = $('#errMsg').length > 0 ? $('#errMsg') : $('.errMsg'),
-            tapOrClick = MT.util.tapOrClick,
-            errMsgFadeIn = MT.util.errMsgFadeIn,
+            tapOrClick = 'click',
             $form = $('#form'),
             $recent = $form.find('#recentpay'),
             $submit = $form.find('.c-submit input'),
@@ -394,9 +389,6 @@
         if (mtBalance > 0) {
             $('#use-credit').attr("checked", true);
         }
-
-        initRecentPayMethods();
-
         $('#use-credit').on('change', function (e) {
             var $that = $(this), $paymoney = $form.find('input[name=paymoney]'),
             useCredit = $that.prop('checked');
@@ -422,159 +414,27 @@
             }
         });
 
-        $submit.on(tapOrClick, function (e, immediately) {
-            e.preventDefault();
-            var showVerify = $form.find(':checked').val() !== 'unionpay' && $form.find(':checked').val() !== 'creditcard';
-
-            if (!immediately && needVerify && useCredit && showVerify) {
-                verifyAccount();
-            } else {
-                $form.find('input[name=checkcode]').val($('#sms-captcha').val());
-
-                submitForm();
-            }
-        });
-
-        function submitForm() {
-
+        $submit.on('click', function (e, immediately) {
             var $checked = $form.find(':checked'),
                 type = $checked.val(),
                 banktype = $checked.parent().data('bankcode'),
                 $payType = $form.find('input[name=paytype]'),
                 $paymoney = $form.find('input[name=paymoney]'),
                 $alipayCode = $form.find('input[name=cashierCode]'),
-                $tenpayCode = $form.find('input[name=bank_type]'),
-                qs = location.search || '';
-
-            qs = qs.slice(1).split('&').filter(function (s) {
-                if (!~s.indexOf('ErrMsg'))
-                    return true;
-            }).join('&');
-
-            if (qs)
-                qs = '?' + qs;
-
+                $tenpayCode = $form.find('input[name=bank_type]');
             if ($needPay.text() == 0) {
                 type = 'credit';
             }
             if (type === 'tenpaywap') {
-                _changeForm2TenPay($alipayCode, $tenpayCode, $payType, banktype);
+                $payType.val('tenpaywap');
             } else if (type === 'alipaywap') {
-                _changeForm2AliPay($alipayCode, $tenpayCode, $payType, banktype);
+                $payType.val('alipaywap');
             }
             else if (type === 'credit') {
-                _changeFormCredit($payType);
+                $payType.val('credit');
             }
             $form.submit();
-
-
-        }
-
-        /**
-         * 支付方式改为财付通
-         * @param {Object} $alipayCode alipay节点，zepto对象
-         * @param {Object} $tenpayCode tenpay节点，zepto对象
-         * @param {Object} $payType 隐藏的bank_type节点，zepto对象
-         * @param {String} bankcode 银行码
-         * @private
-         */
-        function _changeForm2TenPay($alipayCode, $tenpayCode, $payType, bankcode) {
-            if ($alipayCode.length > 0) {
-                var sourceCode = '<input type="hidden" name="bank_type" value="' + bankcode + '" />';
-                $alipayCode.replaceWith($(sourceCode));
-            } else {
-                $tenpayCode.val(bankcode);
-            }
-            $payType.val('tenpaywap');
-        }
-
-        /**
-         * 支付方式改为财付通
-         * @param {Object} $alipayCode alipay节点，zepto对象
-         * @param {Object} $tenpayCode tenpay节点，zepto对象
-         * @param {Object} $payType 隐藏的paytype节点，zepto对象
-         * @param {String} bankcode 银行码
-         * @private
-         */
-        function _changeForm2AliPay($alipayCode, $tenpayCode, $payType, bankcode) {
-            if ($tenpayCode.length > 0) {
-                var sourceCode = '<input type="hidden" name="cashierCode" value="' + bankcode + '" />';
-                $tenpayCode.replaceWith($(sourceCode));
-            } else {
-                $alipayCode.val(bankcode);
-            }
-            $payType.val('alipaywap');
-        }
-
-
-        function _changeFormCredit($payType) {
-            $payType.val('credit');
-        }
-
-        /**
-         * 显示更多支付方式
-         */
-        function initRecentPayMethods() {
-            var $morePay = $('#morePayMethods'),
-                $payItems = $form.find('.common-item'),
-                $title = $normalField.find('.common-title'),
-                payItemsHeight, titleHeight = Number($title.height()) + parseInt($title.css('margin-top'), 10);
-
-            // 没有过最近支付记录的话，默认选择支付宝
-            if ($form.find(':checked').length === 0) {
-                $form.find('#pay-alipayWap').prop('checked', 'checked');
-            }
-            // fix PC 上chrome的bug: “返回”按钮后最近支付没有被选中
-            if ($recent.length > 0) {
-                $form.find(':checked').prop('checked', '');
-                $recent.find('input').prop('checked', 'checked');
-            }
-
-            $morePay.on(util.tapOrClick, function (e) {
-                e.preventDefault();
-
-                $morePay.hide();
-                $payItems.show();
-
-                if (!payItemsHeight) {
-                    payItemsHeight = $normalField.find('.common-items').height();
-                    boxHeight = payItemsHeight + titleHeight;
-                }
-
-                $normalField.css({ 'height': boxHeight });
-            });
-        }
-
-        function resetPos($pop, $mask) {
-            var docHeight = $(window).height(),
-                maskHeight = document.height > docHeight ? document.height : docHeight,
-                $content = $pop.find('#content'),
-                // 这里的100是content的height
-                contentTop = 100 + $(window).scrollTop();
-
-            if (!hasPoped) {
-                $mask.css({ opacity: 0, display: '-webkit-box', height: maskHeight })
-                        .animate({ opacity: 0.8 }, 150, 'ease-in');
-                $content.css('top', contentTop);
-                $pop.css({ opacity: 0, display: '-webkit-box', zIndex: 998, height: maskHeight })
-                        .animate({ opacity: 1 }, 150, 'ease-in');
-            } else {
-                $mask.css({ opacity: 0, display: '-webkit-box' })
-                        .animate({ opacity: 0.8 }, 150, 'ease-in');
-                $pop.css({ opacity: 0, display: '-webkit-box', zIndex: 998 })
-                        .animate({ opacity: 1 }, 150, 'ease-in');
-            }
-        }
-
-        function removePop() {
-            var $pop = $('#pop-wrapper');
-
-            if ($pop.length || isPoping) {
-                isPoping = false;
-                $pop.fadeOut();
-                $('#mask').fadeOut();
-            }
-        }
+        });
     });
 </script>
 <%LoadUserControl("_htmlfooter.ascx", null); %>

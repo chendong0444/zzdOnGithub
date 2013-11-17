@@ -18,10 +18,14 @@
     protected System.Data.DataTable catalogsdt = null;
     protected IList<ICatalogs> catalogslist = null;
     protected StringBuilder sb2 = new StringBuilder();
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-        
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         CatalogsFilter catalogsfilter = new CatalogsFilter();
 
         #region 删除动作
@@ -68,7 +72,7 @@
         catalogsfilter.AddSortOrder(CatalogsFilter.ID_DESC);
         catalogsfilter.AddSortOrder(CatalogsFilter.Sort_Order_DESC);
         catalogsfilter.CurrentPage = AS.Common.Utils.Helper.GetInt(Request.QueryString["page"], 1);
-        catalogsfilter.cityid =","+AsAdmin.City_id.ToString()+",";
+        catalogsfilter.cityid =","+usernew.City_id.ToString()+",";
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             //pager = session.Catalogs.GetPager(catalogsfilter);

@@ -17,11 +17,15 @@
     protected string date_type = "";
     protected string where_type = "";
     protected CouponFilter filter = new CouponFilter();
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         
         base.OnLoad(e);
-       
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         if (!string.IsNullOrEmpty(Request.QueryString["date_type"]))
         {
             url = url + "&date_type=" + Request.QueryString["date_type"];
@@ -141,7 +145,7 @@
         filter.PageSize = 30;
         filter.AddSortOrder(CouponFilter.Create_time_DESC);
         filter.CurrentPage = AS.Common.Utils.Helper.GetInt(Request.QueryString["page"], 1);
-        filter.inOrder_id = AsAdmin.City_id;
+        filter.inOrder_id = usernew.City_id;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             pager = session.Coupon.GetPager(filter);

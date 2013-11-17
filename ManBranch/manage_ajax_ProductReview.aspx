@@ -31,7 +31,7 @@
         //        UserFilter userft = new UserFilter();
         //        productmodel.Status = Helper.GetInt(Request["ddlproductstatus"], 1);
         //        productmodel.ramark = Helper.GetString(Request["remark"], String.Empty);
-        //        productmodel.adminid = AdminPage.AsAdmin.Id;
+        //        productmodel.adminid = PageValue.CurrentAdmin.Id;
         //        productmodel.Operatortype = 0;
 
         //        TeamFilter teamft = new TeamFilter();

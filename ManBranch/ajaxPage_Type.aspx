@@ -18,8 +18,13 @@
     protected string pid = String.Empty;
     protected string brandimg = String.Empty;
     public string message = "";
+    IUser usernew = Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         cid = Helper.GetString(Request["id"], String.Empty);
         zone =Helper.GetString(Request["zone"], String.Empty);
         pid = Helper.GetString(Request["add"], String.Empty);
@@ -352,7 +357,7 @@
         {
             cate1.content = "";
         }
-        cate1.City_pid = AsAdmin.City_id;
+        cate1.City_pid = usernew.City_id;
         #endregion
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {

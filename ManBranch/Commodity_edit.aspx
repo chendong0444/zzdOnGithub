@@ -552,7 +552,7 @@
             team = session.Teams.GetByID(Convert.ToInt32(Request.QueryString["id"]));           
         }
 
-        team.User_id = AS.Common.Utils.Helper.GetInt( AdminPage.AsAdmin.Id,0);
+        team.User_id = AS.Common.Utils.Helper.GetInt(PageValue.CurrentAdmin.Id, 0);
 
         //team.catakey = Request["catakey"];//项目分类的关键字
         //team.catakey = Request["birds"];

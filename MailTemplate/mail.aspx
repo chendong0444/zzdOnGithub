@@ -34,7 +34,8 @@
             teamfilter.FromEndTime = DateTime.Now;
             teamfilter.Team_type = "normal";
         }
-        teamfilter.AddSortOrder(TeamFilter.City_id_DESC);
+        teamfilter.AddSortOrder(TeamFilter.Sort_Order_DESC);
+        teamfilter.Top = 10;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             iListTeam = session.Teams.GetList(teamfilter);

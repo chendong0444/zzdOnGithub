@@ -12,42 +12,72 @@
 <%@ Import Namespace="System.Collections.Generic" %>
 <%@ Import Namespace="System.Linq" %>
 <script runat="server">
-    
     protected override void OnLoad(EventArgs e)
     {
         string mode = Request["mode"];
-        if (mode == "teamnownumber")
+        if (!Request.IsLocal)
         {
-            try
+            //非本地计算机请求
+            Response.Write("只有本地计算机才能请求此地址");
+        }
+        else
+        {
+            if (mode == "teamnownumber")
             {
-                using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+                try
                 {
-                    session.Custom.UpdateTeamNowNumber();
-                }
+                    using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+                    {
+                        session.Custom.UpdateTeamNowNumber();
+                    }
 
+                }
+                catch (Exception ex)
+                {
+                    AS.Common.Utils.WebUtils.LogWrite("自动更新购买人数日志", ex.Message);
+                }
             }
-            catch (Exception ex)
+            if (mode == "sms")
             {
-                AS.Common.Utils.WebUtils.LogWrite("自动更新购买人数日志", ex.Message);
+                GetCouptonTime();
             }
-        }
-        else if (mode == "sms")
-        {
-            GetCouptonTime();
-        }
-        else if (mode == "updateTeamEndtime")
-        {
-            updateTeamEndTime();
-        }
-        else if (mode == "sendMail")
-        {
-            sendMails();
-        }
-        else if (mode == "database")
-        {
-            updateBase();
+            if (mode == "updateTeamEndtime")
+            {
+                updateTeamEndTime();
+            }
+            if (mode == "sendMail")
+            {
+                sendMails();
+            }
+            if (mode == "database")
+            {
+                updateBase();
+            }
+            if (mode == "createapi")
+            {
+                CreateApi();
+            }
         }
         
+    }
+    private void CreateApi()
+    {
+        //WebClient webClient = new WebClient();
+        //try
+        //{
+        //    try
+        //    {
+        //        webClient.DownloadString(PageValue.CurrentSystemConfig["domain"] + "/api/2345.aspx");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        AS.Common.Utils.WebUtils.LogWrite("生成API", "2345api:" + ex.Message);
+        //    }
+        //}
+        //catch (Exception ex)
+        //{
+        //    AS.Common.Utils.WebUtils.LogWrite("生成API", ex.Message);
+        //} 
     }
     private void updateBase()
     {
@@ -89,6 +119,7 @@
     public static bool run = false;//邮件群发正在执行
     private void sendMails()
     {
+
         NameValueCollection _system = PageValue.CurrentSystemConfig;
         // System.IO.File.AppendAllText(AppDomain.CurrentDomain.BaseDirectory + "测试邮件群发.txt", "3333333333\r\n");
         if (!run)
@@ -164,7 +195,7 @@
                             {
                                 Imailserviceprovider provider = mailprovider[i - 1];
                                 if (sendcount >= sendmaxcount && sendmaxcount > 0) break;
-                                string sql = "select top " + sum + " Email,id from mailer where Email like '%" + provider.serviceprovider + "' " + cityidin + " and (sendmailids is null or sendmailids not like '%," + mailtask.id + ",%')";
+                                string sql = "select top " + sum + "  Email,id from mailer where Email like '%" + provider.serviceprovider + "' " + cityidin + " and (sendmailids is null or sendmailids not like '%," + mailtask.id + ",%')";
                                 using (IDataSession session = Store.OpenSession(false))
                                 {
                                     maildto = session.Custom.Query(sql);
@@ -234,7 +265,7 @@
                                 IMailer mailmodel = null;
                                 Imailserviceprovider provider = mailprovider[i - 1];
                                 if (sendcount >= sendmaxcount && sendmaxcount > 0) break;
-                                string sql = "select top " + samesendcount + " Email,id from mailer where Email like '%" + provider.serviceprovider + "' " + cityidin + " and (sendmailids is null or sendmailids not like '%," + mailtask.id + ",%')";
+                                string sql = "select top " + samesendcount + " Email,id from mailer  where Email like '%" + provider.serviceprovider + "' " + cityidin + " and (sendmailids is null or sendmailids not like '%," + mailtask.id + ",%')";
                                 using (IDataSession session = Store.OpenSession(false))
                                 {
                                     maildto = session.Custom.Query(sql);

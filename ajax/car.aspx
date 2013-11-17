@@ -1224,9 +1224,7 @@
                 int detailcount;
                 int ordercount;
                 OrderDetailFilter of = new OrderDetailFilter();
-                of.order_userid = AsUser.Id;
-                of.Teamid = teamid;
-                of.order_state = "pay";
+                of.Wheresql1 = " ([Order].User_id=" + AsUser.Id + " and Teamid=" + teamid + " and [Order].State='pay') or ([Order].User_id=" + AsUser.Id + " and Teamid=" + teamid + " and [Order].Service='cashondelivery' and [Order].State!='unpay') ";
                 //统计订单详情里的项目
                 using (IDataSession seion = AS.GroupOn.App.Store.OpenSession(false))
                 {
@@ -1234,10 +1232,7 @@
                 }
 
                 OrderFilter orderf = new OrderFilter();
-                orderf.User_id = AsUser.Id;
-                orderf.Team_id = teamid;
-                orderf.State = "pay";
-
+                orderf.Wheresql1 = "(User_id=" + AsUser.Id + " and Team_id=" + teamid + " and State='pay') or (User_id=" + AsUser.Id + " and Team_id=" + teamid + " and Service='cashondelivery' and State!='unpay')";
                 //统计订单里的项目
                 using (IDataSession seion = AS.GroupOn.App.Store.OpenSession(false))
                 {

@@ -50,7 +50,7 @@
         {
             ordermodel = session.Orders.GetByID(orderid);
         }
-        if (ordermodel!=null)
+        if (ordermodel != null)
         {
             Cashorder(orderid, Helper.GetInt(ordermodel.CashParent_orderid, 0));
         }
@@ -177,15 +177,43 @@
                         {
                             //判断项目是否过期或者卖光
                             this.txtremark.Value = ordermodel.Remark;
+                            string str;
                             foreach (var model in ordermodel.OrderDetail)
                             {
                                 ITeam team = null;
                                 team = model.Team;
+                                string counts = team.invent_result;
                                 if (team != null)
                                 {
-                                    AS.Enum.TeamState ts = GetState(team);
                                     if (team.teamcata == 0)
                                     {
+                                        if (team.inventory > 0)
+                                        {
+                                            if (model.result != "" && model.result != null)
+                                            {
+                                                string reslut = Utility.GetOrderrule(model.result, team.invent_result, 0);
+                                                string[] resluts = reslut.Split('|');
+                                                for (int i = 0; i < resluts.Length; i++)
+                                                {
+                                                    str = Utilys.GetNumByResult(resluts[i]);
+                                                    if (str.Contains("-"))
+                                                    {
+                                                        SetError("友情提示：订单中数量已超出项目库存，不能支付！");
+                                                        Response.Redirect(WebRoot + "index.aspx");
+                                                        Response.End();
+                                                        return;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            SetError("友情提示：订单中存在已卖光的项目，不能支付！");
+                                            Response.Redirect(WebRoot + "index.aspx");
+                                            Response.End();
+                                            return;
+                                        }
+                                        AS.Enum.TeamState ts = GetState(team);
                                         if (ts != AS.Enum.TeamState.begin && ts != AS.Enum.TeamState.successbuy)
                                         {
                                             SetError("友情提示：订单中存在已过期或已卖光的项目，不能支付！");
@@ -404,7 +432,7 @@
         if (ordermodel != null)
         {
             orderid = ordermodel.Id.ToString();
-           
+
             IList<IOrderDetail> orderdetailmodellist = null;
             if (ordermodel.OrderDetail != null && ordermodel.OrderDetail.Count > 0)
             {
@@ -420,7 +448,35 @@
                     if (namevalue != null) //判断一下为了防止cookie发生异常
                     {
                         ICps cpsmodel = Store.CreateCps();
-                        if (namevalue == "51fanli")//从51fanli来的
+                        if (namevalue == "360" && PageValue.CurrentSystemConfig["open360"] == "1")//360来的
+                        {
+                            string bid = Helper.GetString(cps.Values["bid"], String.Empty);
+                            string qihoo_id = Helper.GetString(cps.Values["qihoo_id"], String.Empty);
+                            string ext = Helper.GetString(cps.Values["ext"], String.Empty);
+                            string qid = cps.Values["qid"];
+
+                            IList<Hashtable> cpslist = null;
+                            using (IDataSession session = Store.OpenSession(false))
+                            {
+                                cpslist = session.Custom.Query("select channelid,[order_id] from cps where channelid='360' and  [order_id] =" + orderid);
+                            }
+                            if (cpslist == null || cpslist.Count == 0)
+                            {
+                                ordermodel.fromdomain = "360cps";
+                                ordermodel.Pay_time = DateTime.Now;
+                                cpsmodel.channelId = namevalue;
+                                cpsmodel.u_id = Helper.GetInt(bid, 0);
+                                cpsmodel.order_id = Helper.GetInt(orderid, 0);
+                                cpsmodel.result = ext;
+                                cpsmodel.value1 = qid;
+                                cpsmodel.username = qihoo_id;
+                                using (IDataSession session = Store.OpenSession(false))
+                                {
+                                    session.Cps.Insert(cpsmodel);
+                                }
+                            }
+                        }
+                        else if (namevalue == "51fanli" && _system["open51fanli"] == "1")//从51fanli来的
                         {
                             int u_id = Helper.GetInt(cps.Values["u_id"], 0); //51返利传过来的用户Id
                             string username = Helper.GetString(cps.Values["username"], String.Empty);
@@ -503,8 +559,7 @@
                                 session.Cps.Insert(cpsmodel);
                             }
                         }
-
-                        else if (namevalue == "linktech") //从linktech来的
+                        else if (namevalue == "linktech" && PageValue.CurrentSystemConfig["openlinktech"] == "1") //从linktech来的
                         {
                             try
                             {
@@ -561,7 +616,7 @@
                             }
                             catch (Exception ex) { WebUtils.LogWrite("linktechcps", ex.Message); }
                         }
-                        else if (namevalue == "tuanmatuanba") //从团妈团爸来的
+                        else if (namevalue == "tuanmatuanba" && PageValue.CurrentSystemConfig["opentuanmatuanba"] == "1") //从团妈团爸来的
                         {
                             try
                             {
@@ -588,13 +643,13 @@
                             }
                             catch (Exception ex) { WebUtils.LogWrite("tuanmatuanbacps", ex.Message); }
                         }
-                        else if (namevalue == "yotao") //从yotao来的
+                        else if (namevalue == "yotao" && PageValue.CurrentSystemConfig["openyotao"] == "1") //从yotao来的
                         {
                             try
                             {
                                 string url = "http://www.yotao.com/orderback/?sid=" + cps.Values["sid"] + "&uid=" + cps.Values["uid"] + "&aid=" + cps.Values["aid"] + "&yid=" + cps.Values["yid"] + "&oid=" + ordermodel.Id + "&amount=" + (ordermodel.Origin - ordermodel.Fare) + "&cback=&mcode=" + Helper.MD5(cps.Values["key"] + cps.Values["uid"] + ordermodel.Id);
                                 string result = url;
-                                Response.Write("<"+"script src='" + url + "'></"+"script>");
+                                Response.Write("<" + "script src='" + url + "'></" + "script>");
                                 cpsmodel.channelId = namevalue;
                                 cpsmodel.u_id = 0;
                                 cpsmodel.order_id = Helper.GetInt(orderid, 0);
@@ -607,7 +662,7 @@
                             }
                             catch (Exception ex) { WebUtils.LogWrite("yotaocps", ex.Message); }
                         }
-                        else if (namevalue == "tpycps") //来自太平洋cps
+                        else if (namevalue == "tpycps" && PageValue.CurrentSystemConfig["opentpy"] == "1") //来自太平洋cps
                         {
                             try
                             {
@@ -617,7 +672,7 @@
                                     string id = System.Configuration.ConfigurationManager.AppSettings["taipingyangid"];
                                     string key = System.Configuration.ConfigurationManager.AppSettings["taipingyangkey"];
                                     string url = "http://news.tpy100.com/UnionCompany/unioncompanyinterface.aspx?userid=" + Server.UrlEncode(userid) + "&codeid=" + id + "&order_date=" + ordermodel.Create_time.ToString("yyyyMMdd") + "&order_time=" + ordermodel.Create_time.ToString("HHmmss") + "&orderid=" + ordermodel.Id + "&price=" + (ordermodel.Origin - ordermodel.Fare) + "&zhuangtai=c&key=" + Helper.MD5(userid + id + ordermodel.Id + (ordermodel.Origin - ordermodel.Fare) + "c" + key);
-                                    Response.Write("<"+"script src='" + url + "'></"+"script>");
+                                    Response.Write("<" + "script src='" + url + "'></" + "script>");
                                     string result = String.Empty;
                                     cpsmodel.channelId = "taipingyangcps";
                                     cpsmodel.u_id = 0;
@@ -631,7 +686,7 @@
                             }
                             catch (Exception ex) { WebUtils.LogWrite("tpycps", ex.Message); }
                         }
-                        else if (namevalue == "youhua")//来自优哈联盟
+                        else if (namevalue == "youhua" && PageValue.CurrentSystemConfig["openyouhua"] == "1")//来自优哈联盟
                         {
                             try
                             {
@@ -649,7 +704,7 @@
                             }
                             catch { }
                         }
-                        else if (namevalue == "renrenzhe") //人人折
+                        else if (namevalue == "renrenzhe" && PageValue.CurrentSystemConfig["openrenrenzhe"] == "1") //人人折
                         {
                             int u_id = Helper.GetInt(cps.Values["u_id"], 0); //人人折返利传过来的用户Id
                             string uname = Helper.GetString(cps.Values["uname"], String.Empty);
@@ -688,7 +743,7 @@
                                     c_cd = c_cd + Server.UrlEncode(catalogname) + "|_|";
                                 }
                             }
-                           
+
                             string title = p_title.Replace("!", "%21").ToUpper().Replace("(", "%28").ToUpper().Replace(")", "%29").ToUpper().Replace("（", "%28").ToUpper().Replace("）", "%29").ToUpper();
                             string u = "it_cnt=" + it_cnt + "&k=" + k + "&o_cd=" + o_cd + "&o_time=" + o_time + "&p_cd=" + p_cd + "&p_title=" + title + "&p_url=" + p_url.ToUpper() + "&price=" + price + "&u_id=" + u_id + "";
                             string Md5code = u + cps.Values["ss"];
@@ -740,7 +795,7 @@
             CPS(ordermodel);
         }
         catch { }
-        
+
         Response.Write("<script>window.location.href='" + Page.ResolveUrl(GetUrl("选择银行", "shopcart_service.aspx?orderid=" + ordermodel.Id)) + "';</" + "script>");
         Response.End();
     }
@@ -926,7 +981,7 @@
     }
 </script>
 <form id="form" runat="server">
-    <script type="text/javascript">
+<script type="text/javascript">
         function changecity(pid) {
             X.boxShow('正在加载省市区列表,请稍后...', false);
             var sels = $("#citylist").find("select");
@@ -1059,291 +1114,323 @@
                 }
             });
         }
-    </script>
-    <asp:hiddenfield id="hiorderid" runat="server" />
-    <input type="hidden" name="county" id="county" />
-    <input type="hidden" name="money" id="money" runat="server" />
-    <%if (ordermodel != null)
-      { %>
-    <div id="bdw" class="bdw">
-        <div id="bd" class="cf">
-            <div id="content">
-                <div id="deal-buy" class="box">
-                    <input type="hidden" name="totalNumber" value="" />
-                    <div class="box-content">
-                        <img class="dynload" <%=ashelper.getimgsrc(ImagePath()+"step2.png") %> width="660"
-                            height="69" />
-                        <div class="head">
-                            <h2>您的订单</h2>
-                        </div>
-                        <div class="sect">
-                            <table class="order-table">
-                                <tr>
-                                    <th class="deal-buy-desc">项目名称
-                                    </th>
-                                    <th class="deal-buy-quantity" style="width: 80px;">数量
-                                    </th>
-                                    <th class="deal-buy-multi"></th>
-                                    <th class="deal-buy-price" style="width: 80px;">价格
-                                    </th>
-                                    <th class="deal-buy-price"></th>
-                                    <th class="deal-buy-total">总价
-                                    </th>
-                                    <th class="deal-buy-total">代金券
-                                    </th>
-                                </tr>
-                                <% detaillist = ordermodel.OrderDetail; %>
-                                <%foreach (var model in detaillist)
+</script>
+<asp:hiddenfield id="hiorderid" runat="server" />
+<input type="hidden" name="county" id="county" />
+<input type="hidden" name="money" id="money" runat="server" />
+<%if (ordermodel != null)
+  { %>
+<div id="bdw" class="bdw">
+    <div id="bd" class="cf">
+        <div id="content">
+            <div id="deal-buy" class="box">
+                <input type="hidden" name="totalNumber" value="" />
+                <div class="box-content">
+                    <img class="dynload" <%=ashelper.getimgsrc(ImagePath()+"step2.png") %> width="660"
+                        height="69" />
+                    <div class="head">
+                        <h2>
+                            您的订单</h2>
+                    </div>
+                    <div class="sect">
+                        <table class="order-table">
+                            <tr>
+                                <th class="deal-buy-desc">
+                                    项目名称
+                                </th>
+                                <th class="deal-buy-quantity" style="width: 80px;">
+                                    数量
+                                </th>
+                                <th class="deal-buy-multi">
+                                </th>
+                                <th class="deal-buy-price" style="width: 80px;">
+                                    价格
+                                </th>
+                                <th class="deal-buy-price">
+                                </th>
+                                <th class="deal-buy-total">
+                                    总价
+                                </th>
+                                <th class="deal-buy-total">
+                                    代金券
+                                </th>
+                            </tr>
+                            <% detaillist = ordermodel.OrderDetail; %>
+                            <%foreach (var model in detaillist)
+                              {
+                                  ITeam team = null;
+                                  team = model.Team;
+                                  if (team != null)
                                   {
-                                      ITeam team = null;
-                                      team = model.Team;
-                                      if (team != null)
+                            %>
+                            <tr>
+                                <td class="deal-buy-desc">
+                                    <a target="_blank" href="<%=getTeamPageUrl(team.Id)%>">
+                                        <%=team.Title%></a><font style="color: red"><%=WebUtils.Getbulletin(model.result)%></font>
+                                </td>
+                                <td t="totalnum" tid="<%=model.Teamid %>" class="deal-buy-quantity">
+                                    <%=model.Num%>
+                                </td>
+                                <td class="deal-buy-multi">
+                                    x
+                                </td>
+                                <td class="deal-buy-price" id="deal-buy-price">
+                                    <span class="money"><span>
+                                        <%=ASSystem.currency%><%=model.Teamprice%>
+                                </td>
+                                <td class="deal-buy-price">
+                                    =
+                                </td>
+                                <td class="deal-buy-total" id="deal-buy-total">
+                                    <%=ASSystem.currency %><span total="teamprice"><%=Convert.ToDecimal(model.Num * model.Teamprice - model.Credit)%></span>
+                                </td>
+                                <%if (GetTeamid(Convert.ToInt32(model.Teamid), Convert.ToInt32(model.Order_id)) == null)
+                                  {
+                                      if (team.Card > 0)
                                       {
                                 %>
-                                <tr>
-                                    <td class="deal-buy-desc">
-                                       <a target="_blank" href="<%=getTeamPageUrl(team.Id)%>"><%=team.Title%></a><font style="color: red"><%=WebUtils.Getbulletin(model.result)%></font>
-                                    </td>
-                                    <td t="totalnum" tid="<%=model.Teamid %>" class="deal-buy-quantity">
-                                        <%=model.Num%>
-                                    </td>
-                                    <td class="deal-buy-multi">x
-                                    </td>
-                                    <td class="deal-buy-price" id="deal-buy-price">
-                                        <span class="money"><span>
-                                            <%=ASSystem.currency%><%=model.Teamprice%>
-                                    </td>
-                                    <td class="deal-buy-price">=
-                                    </td>
-                                    <td class="deal-buy-total" id="deal-buy-total">
-                                        <%=ASSystem.currency %><span total="teamprice"><%=Convert.ToDecimal(model.Num * model.Teamprice - model.Credit)%></span>
-                                    </td>
-                                    <%if (GetTeamid(Convert.ToInt32(model.Teamid), Convert.ToInt32(model.Order_id)) == null)
-                                      {
-                                          if (team.Card > 0)
-                                          {
-                                    %>
-                                    <td style="width: 80px; text-align: right;">
-                                        <a href="<%=WebRoot%>ajax/coupon.aspx?action=card&detailid=<%=model.id %>&orderid=<%=ordermodel.Id %>"
-                                            class="ajaxlink">代金券</a>
-                                    </td>
-                                    <% }
-                                          else
-                                          {%>
-                                    <td style="width: 80px; text-align: right;">不能使用
-                                    </td>
-                                    <% }
-                                      }
+                                <td style="width: 80px; text-align: right;">
+                                    <a href="<%=WebRoot%>ajax/coupon.aspx?action=card&detailid=<%=model.id %>&orderid=<%=ordermodel.Id %>"
+                                        class="ajaxlink">代金券</a>
+                                </td>
+                                <% }
                                       else
                                       {%>
-                                    <td style="width: 80px; text-align: right;">已经使用代金券<%=model.carno%>
-                                    </td>
+                                <td style="width: 80px; text-align: right;">
+                                    不能使用
+                                </td>
+                                <% }
+                                  }
+                                  else
+                                  {%>
+                                <td style="width: 80px; text-align: right;">
+                                    已经使用代金券<%=model.carno%>
+                                </td>
+                                <% }%>
+                            </tr>
+                            <% }
+                              }%>
+                            <tr>
+                                <td class="deal-buy-desc">
+                                    快递
+                                </td>
+                                <td class="deal-buy-quantity">
+                                </td>
+                                <td class="deal-buy-multi">
+                                </td>
+                                <td class="deal-buy-price" style="width: 80px;">
+                                    <%=ASSystem.currency%><span id="deal-express-price" total="fareprice">
+                                        <%=fare%>
+                                    </span>
+                                </td>
+                                <td>
+                                </td>
+                                <td class="deal-buy-total">
+                                    <span class="money"></span><span id="deal-express-total"></span>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                            <%if (ordermodel.disamount > 0)
+                              { %>
+                            <tr class="order-total">
+                                <td class="deal-buy-desc">
+                                    <%=ordermodel.Disinfos %>
+                                </td>
+                                <td class="deal-buy-quantity">
+                                </td>
+                                <td class="deal-buy-multi">
+                                </td>
+                                <td class="deal-buy-price">
+                                    <%=ASSystem.currency%><span id="Span1" total="disamount"> -<%=(ordermodel.disamount) %>
+                                    </span>
+                                </td>
+                                <td>
+                                </td>
+                                <td class="deal-buy-total">
+                                    <span class="money"></span><span id="Span2"></span>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                            <%} %>
+                            <%if (ordermodel.State != "scoreunpay")
+                              { %>
+                            <%if (ActionHelper.GetUserLevelMoney(AsUser.totalamount) != 1)
+                              { %>
+                            <tr>
+                                <td>
+                                </td>
+                                <td colspan="3" style="color: red">
+                                    等级：<%=Utilys.GetUserLevel(AsUser.totalamount)%>,折扣：
+                                    <% if (ActionHelper.GetUserLevelMoney(AsUser.totalamount) < 1)
+                                       {%>
+                                    <%=ActionHelper.GetUserLevelMoney(AsUser.totalamount)*10 + "折"%>
+                                    <% }
+                                       else
+                                       {%>
+                                    不打折
                                     <% }%>
-                                </tr>
-                                <% }
-                                  }%>
-                                <tr>
-                                    <td class="deal-buy-desc">快递
-                                    </td>
-                                    <td class="deal-buy-quantity"></td>
-                                    <td class="deal-buy-multi"></td>
-                                    <td class="deal-buy-price" style="width: 80px;">
-                                        <%=ASSystem.currency%><span id="deal-express-price" total="fareprice">
-                                            <%=fare%>
-                                        </span>
-                                    </td>
-                                    <td></td>
-                                    <td class="deal-buy-total">
-                                        <span class="money"></span><span id="deal-express-total"></span>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <%if (ordermodel.disamount > 0)
-                                  { %>
-                                <tr class="order-total">
-                                    <td class="deal-buy-desc">
-                                       <%=ordermodel.Disinfos %>
-                                    </td>
-                                    <td class="deal-buy-quantity"></td>
-                                    <td class="deal-buy-multi"></td>
-                                    <td class="deal-buy-price">
-                                        <%=ASSystem.currency%><span id="Span1" total="disamount"> -<%=(ordermodel.disamount) %>
-                                        </span>
-                                    </td>
-                                    <td></td>
-                                    <td class="deal-buy-total">
-                                        <span class="money"></span><span id="Span2"></span>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <%} %>
-                                <%if (ordermodel.State != "scoreunpay")
-                                  { %>
-                                <%if (ActionHelper.GetUserLevelMoney(AsUser.totalamount) != 1)
-                                  { %>
-                                <tr>
-                                    <td></td>
-                                    <td colspan="3" style="color: red">等级：<%=Utilys.GetUserLevel(AsUser.totalamount)%>,折扣：
-                                            <% if (ActionHelper.GetUserLevelMoney(AsUser.totalamount) < 1)
-                                               {%>
-                                        <%=ActionHelper.GetUserLevelMoney(AsUser.totalamount)*10 + "折"%>
-                                        <% }
-                                               else
-                                               {%>
-                                            不打折
-                                            <% }%>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <% }
-                                  }%>
-                                  <%if (youhui == true)
-                                      { %>
-                                    <tr id="Tr1" class="order-total" runat="server">
-                                        <td class="deal-buy-desc">
-                                            <strong>享受的优惠:</strong>
-                                        </td>
-                                        <td colspan="3" style="color: red">
-                                            <asp:Literal ID="Literal1" runat="server"></asp:Literal>
-                                        </td>
-                                    </tr>
-                                    <%} %>
-                                <tr class="order-total">
-                                    <td class="deal-buy-desc">
-                                        <strong>应付总额：</strong>
-                                    </td>
-                                    <td class="deal-buy-quantity"></td>
-                                    <td class="deal-buy-multi"></td>
-                                    <td class="deal-buy-price"></td>
-                                    <td class="deal-buy-price">=
-                                    </td>
-                                    <td class="deal-buy-total">
-                                        <%=ASSystem.currency%><span total="totalprice"><%=totalprice%></span>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                            </table>
-                            <div class="field username">
-                                <label>
-                                    收件人</label>
-                                <%if (CookieUtils.GetCookieValue("fullname") != null && CookieUtils.GetCookieValue("fullname") != "")
-                                  { %>
-                                <input type="text" size="30" name="realname" id="Text1" class="f-input" value="<%=CookieUtils.GetCookieValue("fullname") %>"
-                                    require="true" datatype="require" group="a" />
-                                <%}
-                                  else
-                                  { %>
-                                <input type="text" size="30" name="realname" id="settingsrealname" class="f-input"
-                                    value="<%= user.Realname%>" require="true" datatype="require" group="a" />
-                                <%} %>
-                                <span class="hint">收件人请与有效证件姓名保持一致，便于收取物品</span>
-                            </div>
-                            <div class="field mobile">
-                                <label>
-                                    手机号码</label>
-                                <%if (CookieUtils.GetCookieValue("mobile_phone") != null && CookieUtils.GetCookieValue("mobile_phone") != "")
-                                  {%>
-                                <input type="text" size="30" name="mobile" id="settingsmobile" class="number" value="<%=CookieUtils.GetCookieValue("mobile_phone") %>"
-                                    group="a" require="true" datatype="mobile" maxlength="11" />
-                                <% }
-                                  else
-                                  { %>
-                                <input type="text" size="30" name="mobile" id="Text2" class="number" value="<%=user.Mobile %>"
-                                    group="a" require="true" datatype="mobile" maxlength="11" />
-                                <%} %>
-                                <span class="hint">手机号码是我们联系您最重要的方式，请准确填写</span>
-                            </div>
-                            <div class="field username">
-                                <label>
-                                    省市区(必填)</label>
-                                <div id="citylist" class="cityclass">
-                                </div>
-                                <span id="area" class="hint_kd"></span><span class="hint">城市必须选择</span>
-                            </div>
-                            <div class="field username">
-                                <label>
-                                    街道地址(必填)</label>
-                                <%if (CookieUtils.GetCookieValue("address") != null && CookieUtils.GetCookieValue("address") != "")
-                                  { %>
-                                <input type="text" size="30" name="address" id="Text3" class="f-input" value="<%=CookieUtils.GetCookieValue("address") %>"
-                                    group="a" require="true" datatype="require" />
-                                <%}
-                                  else
-                                  { %>
-                                <input type="text" size="30" name="address" id="settingsaddress" class="f-input"
-                                    value="<%=user.Address %>" group="a" require="true" datatype="require" />
-                                <%} %>
-                                <span class="hint">街道具体地址</span>
-                            </div>
-                                <script>
-                                    $("#citylist").load(webroot + "ajax/citylist.aspx?pid=0", null, function (data) {
-
-                                    });
-                                </script>
-                            <div id="expressarea" class="field mobile">
-                            </div>
-                            <%if (_system["orderemailvalid"] == "1")
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                            <% }
+                              }%>
+                            <%if (youhui == true)
+                              { %>
+                            <tr id="Tr1" class="order-total" runat="server">
+                                <td class="deal-buy-desc">
+                                    <strong>享受的优惠:</strong>
+                                </td>
+                                <td colspan="3" style="color: red">
+                                    <asp:literal id="Literal1" runat="server"></asp:literal>
+                                </td>
+                            </tr>
+                            <%} %>
+                            <tr class="order-total">
+                                <td class="deal-buy-desc">
+                                    <strong>应付总额：</strong>
+                                </td>
+                                <td class="deal-buy-quantity">
+                                </td>
+                                <td class="deal-buy-multi">
+                                </td>
+                                <td class="deal-buy-price">
+                                </td>
+                                <td class="deal-buy-price">
+                                    =
+                                </td>
+                                <td class="deal-buy-total">
+                                    <%=ASSystem.currency%><span total="totalprice"><%=totalprice%></span>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="field username">
+                            <label>
+                                收件人</label>
+                            <%if (CookieUtils.GetCookieValue("fullname") != null && CookieUtils.GetCookieValue("fullname") != "")
+                              { %>
+                            <input type="text" size="30" name="realname" id="Text1" class="f-input" value="<%=CookieUtils.GetCookieValue("fullname") %>"
+                                require="true" datatype="require" group="a" />
+                            <%}
+                              else
+                              { %>
+                            <input type="text" size="30" name="realname" id="settingsrealname" class="f-input"
+                                value="<%= user.Realname%>" require="true" datatype="require" group="a" />
+                            <%} %>
+                            <span class="hint">收件人请与有效证件姓名保持一致，便于收取物品</span>
+                        </div>
+                        <div class="field mobile">
+                            <label>
+                                手机号码</label>
+                            <%if (CookieUtils.GetCookieValue("mobile_phone") != null && CookieUtils.GetCookieValue("mobile_phone") != "")
                               {%>
-                            <div class="field mobile">
-                                <label>
-                                    我的邮箱</label>
-                                <input type="text" size="30" name="con_email" id="settingemail" class="f-input" value="<%=user.Email %>"
-                                    group="a" require="true" datatype="email|ajax" vname="editemail" url="<%=WebRoot%>ajax/user.aspx"
-                                    msg="邮箱格式不正确|" msgid="emailerr" />
-                            </div>
-                            <% }%>
-                            <div class="field mobile">
-                                <label>
-                                    邮政编码</label>
-                                <%if (CookieUtils.GetCookieValue("post") != null && CookieUtils.GetCookieValue("post") != "")
-                                  {%>
-                                <input type="text" size="30" name="zipcode" id="Text4" class="number" value="<%=CookieUtils.GetCookieValue("post") %>"
-                                    group="a" require="true" datatype="zip" maxlength="6" />
-                                <%}
-                                  else
-                                  { %>
-                                <input type="text" size="30" name="zipcode" id="settingszipcode" class="number" value="<%=user.Zipcode %>"
-                                    group="a" require="true" datatype="zip" maxlength="6" />
-                                <%} %>
-                            </div>
-                            <div class="field mobile">
-                                <label>
-                                    订单附言</label>
-                                <textarea name="remark" id="txtremark" rows="6" size="30" cols="6" runat="server"
-                                    class="f-input"></textarea>
-                            </div>
+                            <input type="text" size="30" name="mobile" id="settingsmobile" class="number" value="<%=CookieUtils.GetCookieValue("mobile_phone") %>"
+                                group="a" require="true" datatype="mobile" maxlength="11" />
+                            <% }
+                              else
+                              { %>
+                            <input type="text" size="30" name="mobile" id="Text2" class="number" value="<%=user.Mobile %>"
+                                group="a" require="true" datatype="mobile" maxlength="11" />
+                            <%} %>
+                            <span class="hint">手机号码是我们联系您最重要的方式，请准确填写</span>
                         </div>
-                        <div class="clear">
+                        <div class="field username">
+                            <label>
+                                省市区(必填)</label>
+                            <div id="citylist" class="cityclass">
+                            </div>
+                            <span id="area" class="hint_kd"></span><span class="hint">城市必须选择</span>
                         </div>
-                        <div style="margin-bottom: 10px; margin-left: 10px;">
-                            <input type="submit" value="确认订单，付款" class="formbutton validator" name="btnadd" group="a" />
-                            <span id="errorexpressarea"></span><span id="errorcitylist"></span>&nbsp;&nbsp;
-                                <a href="<%=GetUrl("购物车列表","shopcart_show.aspx")%>">返回修改订单</a>
+                        <div class="field username">
+                            <label>
+                                街道地址(必填)</label>
+                            <%if (CookieUtils.GetCookieValue("address") != null && CookieUtils.GetCookieValue("address") != "")
+                              { %>
+                            <input type="text" size="30" name="address" id="Text3" class="f-input" value="<%=CookieUtils.GetCookieValue("address") %>"
+                                group="a" require="true" datatype="require" />
+                            <%}
+                              else
+                              { %>
+                            <input type="text" size="30" name="address" id="settingsaddress" class="f-input"
+                                value="<%=user.Address %>" group="a" require="true" datatype="require" />
+                            <%} %>
+                            <span class="hint">街道具体地址</span>
+                        </div>
+                        <script>
+                            $("#citylist").load(webroot + "ajax/citylist.aspx?pid=0", null, function (data) {
+
+                            });
+                        </script>
+                        <div id="expressarea" class="field mobile">
+                        </div>
+                        <%if (_system["orderemailvalid"] == "1")
+                          {%>
+                        <div class="field mobile">
+                            <label>
+                                我的邮箱</label>
+                            <input type="text" size="30" name="con_email" id="settingemail" class="f-input" value="<%=user.Email %>"
+                                group="a" require="true" datatype="email|ajax" vname="editemail" url="<%=WebRoot%>ajax/user.aspx"
+                                msg="邮箱格式不正确|" msgid="emailerr" />
+                        </div>
+                        <% }%>
+                        <div class="field mobile">
+                            <label>
+                                邮政编码</label>
+                            <%if (CookieUtils.GetCookieValue("post") != null && CookieUtils.GetCookieValue("post") != "")
+                              {%>
+                            <input type="text" size="30" name="zipcode" id="Text4" class="number" value="<%=CookieUtils.GetCookieValue("post") %>"
+                                group="a" require="true" datatype="zip" maxlength="6" />
+                            <%}
+                              else
+                              { %>
+                            <input type="text" size="30" name="zipcode" id="settingszipcode" class="number" value="<%=user.Zipcode %>"
+                                group="a" require="true" datatype="zip" maxlength="6" />
+                            <%} %>
+                        </div>
+                        <div class="field mobile">
+                            <label>
+                                订单附言</label>
+                            <textarea name="remark" id="txtremark" rows="6" size="30" cols="6" runat="server"
+                                class="f-input"></textarea>
                         </div>
                     </div>
                     <div class="clear">
                     </div>
+                    <div style="margin-bottom: 10px; margin-left: 10px;">
+                        <input type="submit" value="确认订单，付款" class="formbutton validator" name="btnadd" group="a" />
+                        <span id="errorexpressarea"></span><span id="errorcitylist"></span>&nbsp;&nbsp;
+                        <a href="<%=GetUrl("购物车列表","shopcart_show.aspx")%>">返回修改订单</a>
+                    </div>
+                </div>
+                <div class="clear">
                 </div>
             </div>
-            <div id="sidebar">
-                <div class="deal-subscribe" <%=dispaly %>>
-                    <div class="splittop">
-                    </div>
-                    <div class="body" id="deal-subscribe-body">
-                        <p class="order-split">
-                            订单号：<span class="split-orderid"><%=orderNewId %></span><a href="<%=GetUrl("购物车订单", "shopcart_confirmation.aspx?orderid="+orderNewId)%>">
-                                <img src="<%=ImagePath()%>pay-order.gif" /></a>
-                        </p>
-                    </div>
-                    <div class="bottom">
-                    </div>
+        </div>
+        <div id="sidebar">
+            <div class="deal-subscribe" <%=dispaly %>>
+                <div class="splittop">
+                </div>
+                <div class="body" id="deal-subscribe-body">
+                    <p class="order-split">
+                        订单号：<span class="split-orderid"><%=orderNewId %></span><a href="<%=GetUrl("购物车订单", "shopcart_confirmation.aspx?orderid="+orderNewId)%>">
+                            <img src="<%=ImagePath()%>pay-order.gif" /></a>
+                    </p>
+                </div>
+                <div class="bottom">
                 </div>
             </div>
         </div>
     </div>
-    <% }%>
+</div>
+<% }%>
 </form>
 <%LoadUserControl("_footer.ascx", null); %>
 <%LoadUserControl("_htmlfooter.ascx", null); %>

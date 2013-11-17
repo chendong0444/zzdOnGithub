@@ -40,8 +40,8 @@
         //从用户控件传来的邮件订阅
         if (!string.IsNullOrEmpty(Request["email"]) && Request.HttpMethod == "GET")
         {
-            useremail = Request["email"].ToString();
-            string email = AS.Common.Utils.Helper.GetString(Request["email"], String.Empty);
+            useremail =Server.HtmlDecode(Request["email"].ToString());
+            string email = AS.Common.Utils.Helper.GetString(useremail, String.Empty);
             if (!AS.Common.Utils.Helper.ValidateString(email, "email"))
             {
                 SetError("邮箱格式不正确，请重新输入您的邮箱！");
@@ -63,7 +63,7 @@
                     mailer.City_id = CurrentCity.Id;
                     string code = Guid.NewGuid().ToString();
                     mailer.Secret = code.Substring(0, 32);
-                    mailer.Email = email;
+                    mailer.Email = Server.HtmlEncode(email);
                     int count = 0;
                     using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
                     {
@@ -140,7 +140,7 @@
                     mailer.City_id = AS.Common.Utils.Helper.GetInt(Request["city"], 0);
                     string code = Guid.NewGuid().ToString();
                     mailer.Secret = code.Substring(0, 32);
-                    mailer.Email = email;
+                    mailer.Email = Server.HtmlEncode(email);
                     int count = 0;
                     using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
                     {

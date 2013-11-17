@@ -38,6 +38,7 @@
         if (Request["btnselect"] == "筛选")
         {
             request_tteamId = Helper.GetString(hidTeamId.Value, String.Empty);
+            request_tteamId=Helper.GetString(Request.QueryString["txtTeamId"], String.Empty);
             request_orderId = Helper.GetString(Request.QueryString["txtOrderId"], String.Empty);
             request_coupon = Helper.GetString(Request.QueryString["txtcoupon"], String.Empty);
             request_state = Helper.GetString(Request.QueryString["ddlstate"], String.Empty);
@@ -211,12 +212,7 @@
                                         <%=strCouponname %>列表</h2>
                                     <ul class="contact-filter">
                                         <li>
-                                            项目ID：<input type="text" id="txtTeamId" name="txtTeamId" class="h-input" <%if(!string.IsNullOrEmpty(request_tteamId)){ %> disabled="disabled" value="<%=request_tteamId %>" <%}
-                                            if(!string.IsNullOrEmpty(Request.QueryString["teamid"]))
-                                            {%> disabled="disabled" value="<%=Request.QueryString["teamid"] %>"
-                                            
-                                            <%} %> 
-                                             />
+                                            项目ID：<input type="text" id="txtTeamId" name="txtTeamId" class="h-input" <%if(!string.IsNullOrEmpty(request_tteamId)){ %> value="<%=request_tteamId %>" <%}%> />
                                             订单ID：<input type="text" id="txtOrderId" name="txtOrderId" class="h-input" <%if(!string.IsNullOrEmpty(Request.QueryString["txtOrderId"])){ %>value="<%=Request.QueryString["txtOrderId"] %>" <%} %> 
                                              />
                                             券编号：<input type="text" id="txtcoupon" name="txtcoupon" class="h-input" <%if(!string.IsNullOrEmpty(Request.QueryString["txtcoupon"])){ %>value="<%=Request.QueryString["txtcoupon"] %>" <%} %> 

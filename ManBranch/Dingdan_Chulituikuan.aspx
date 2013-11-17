@@ -23,10 +23,14 @@
     protected string pid = "";
     protected string oid = "";
     RefundsFilter filter = new RefundsFilter();
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         if (!string.IsNullOrEmpty(Request.QueryString["state"]))
         {
             url = url + "&state=" + Request.QueryString["state"];
@@ -62,7 +66,7 @@
             {
                 orderby = session.Orders.GetByID(Helper.GetInt(Request.QueryString["oid"], 0));
             }
-            if (orderby.City_id==AsAdmin.City_id)
+            if (orderby.City_id==usernew.City_id)
             {
                 url = url + "&oid=" + Request.QueryString["oid"];
                filter.Order_Id = Helper.GetInt(Request.QueryString["oid"], 0);
@@ -100,7 +104,7 @@
         filter.PageSize = 30;
         filter.AddSortOrder(RefundsFilter.ID_DESC);
         filter.CurrentPage = AS.Common.Utils.Helper.GetInt(Request.QueryString["page"], 1);
-        filter.inorder_id= AsAdmin.City_id;
+        filter.inorder_id= usernew.City_id;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             pager = session.Refunds.GetPager(filter);

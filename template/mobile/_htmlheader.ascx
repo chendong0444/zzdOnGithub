@@ -22,8 +22,5 @@
         media="(device-height:568px)">
     <link rel="icon" href="<%=PageValue.CurrentSystem.domain+PageValue.WebRoot %>upfile/icon/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="<%=PageValue.CurrentSystem.domain+PageValue.WebRoot %>upfile/icon/favicon.ico" type="image/x-icon" />
-    <script>
-        var MT = window.MT || {};
-    </script>
     <link rel="stylesheet" href="<%=PageValue.CurrentSystem.domain+PageValue.MobileCssPath %>/css/index.css" type="text/css" />
 </head>

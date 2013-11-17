@@ -1,14 +1,10 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
 
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     IUser user = null;
@@ -50,14 +46,14 @@
             }
             if (Request.Form["verifyCode"] == code && Request.Form["password"] == Request.Form["password2"])
             {
-                IUser user = Store.CreateUser();
+                IUser user = AS.GroupOn.App.Store.CreateUser();
                 UserFilter usfilter = new UserFilter();
                 usfilter.Mobile = Session["s_mobile"].ToString();
                 using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
                 {
                     user = session.Users.Get(usfilter);
                 }
-                IUser userpwd = Store.CreateUser();
+                IUser userpwd = AS.GroupOn.App.Store.CreateUser();
                 userpwd.Password = System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(Request.Form["password"] + PassWordKey, "md5");
                 userpwd.Id = user.Id;
                 int i = 0;

@@ -194,7 +194,7 @@
                 sb2.Append("<td ><div style='word-wrap: break-word;overflow: hidden; width: 200px;'>" + user.Email + "/" + user.Username + "</div></td>");
             else    
                 sb2.Append("<td ></td>");
-            if (user.Mobile != null)
+            if (user != null && user.Mobile != null)
                 sb2.Append("<td >" + user.Signmobile + "</td>");
             else
                 sb2.Append("<td ></td>");

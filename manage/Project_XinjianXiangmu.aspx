@@ -1560,7 +1560,7 @@
                 });
             },
             focus: function (event, ui) {
-                $("#shanghu").val(ui.item.label);
+                $("#hidshanghu").val(ui.item.label);
                 return false;
             }
         });

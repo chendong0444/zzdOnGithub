@@ -32,9 +32,14 @@
     protected ICategory categorymodel = null;
     private string href = "";
     private NameValueCollection _system = new NameValueCollection();
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         TeamFilter filter2 = new TeamFilter();
         _system = AS.Common.Utils.WebUtils.GetSystem();   
         if (Request.QueryString["remove"] != null)
@@ -174,7 +179,7 @@
         filter2.unpoint = "point";
         //filter2.State = TeamState.None;
         filter2.FromBegin_time = DateTime.Now;
-        filter2.City_id = AsAdmin.City_id;
+        filter2.City_id = usernew.City_id;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             pager = session.Teams.GetPager(filter2);

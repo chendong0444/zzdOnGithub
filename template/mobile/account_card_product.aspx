@@ -1,13 +1,10 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     protected StringBuilder strhtml = new StringBuilder();
@@ -63,7 +60,7 @@
                {%>
             <div>
                 <a href="<%=GetMobilePageUrl(item.Id) %>">
-                    <img data-src="<%=item.PhoneImg==null?String.Empty:item.PhoneImg%>" width="122" height="74"
+                    <img data-src="<%=TeamMethod.GetWapImgUrl(item.PhoneImg)%>" width="122" height="74"
                         alt="<%=item.Product %>" />
                     <detail>
                     <ul>

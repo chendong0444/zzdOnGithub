@@ -232,7 +232,7 @@
         {
             strremark = strremark.Replace(@"\", @"\\");
         }
-        ordermodel.Remark = strremark;
+        ordermodel.Remark = Server.HtmlEncode(strremark);
         AsUser.Realname = Request["realname"];
         AsUser.Mobile = Request["mobile"];
         AsUser.Address = Request["address"];

@@ -1,14 +1,10 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="AS.GroupOn.Controls.FBasePage" %>
 
-<%@ Import Namespace="AS.GroupOn" %>
-<%@ Import Namespace="AS.Common" %>
+<%@ Import Namespace="AS.Common.Utils" %>
 <%@ Import Namespace="AS.GroupOn.Controls" %>
 <%@ Import Namespace="AS.GroupOn.Domain" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess" %>
 <%@ Import Namespace="AS.GroupOn.DataAccess.Filters" %>
-<%@ Import Namespace="AS.GroupOn.DataAccess.Accessor" %>
-<%@ Import Namespace="AS.Common.Utils" %>
-<%@ Import Namespace="AS.GroupOn.App" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <script runat="server">
     protected OrderFilter ordermodel = new OrderFilter();
@@ -67,7 +63,7 @@
         {
             if (state == "pay" || state == "unpay" || state == "nocod" || state == "refund" || state == "cancel")
             {
-                string imgurl = PageValue.CurrentSystem.domain + WebRoot + (teammodel.PhoneImg == null ? String.Empty : teammodel.PhoneImg);
+                string imgurl = TeamMethod.GetWapImgUrl(teammodel.PhoneImg);
                 if (teammodel.Begin_time <= DateTime.Now && teammodel.End_time > DateTime.Now)
                 {
                     HtmlBuilder.AppendFormat("<a href='{0}'>", GetUrl("手机版订单购买", "team_buy.aspx") + teammodel.Id);
@@ -110,7 +106,7 @@
                     }
                     if (teammodel != null && teammodel.teamcata == 0)
                     {
-                        string imgurl = PageValue.CurrentSystem.domain + WebRoot + (teammodel.PhoneImg == null ? String.Empty : teammodel.PhoneImg);
+                        string imgurl = TeamMethod.GetWapImgUrl(teammodel.PhoneImg);
                         if (teammodel.Begin_time <= DateTime.Now && teammodel.End_time > DateTime.Now)
                         {
                             if (state == "pay" || state == "unpay" || state == "nocod" || state == "refund" || state == "cancel")

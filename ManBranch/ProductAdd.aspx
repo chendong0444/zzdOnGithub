@@ -19,9 +19,14 @@
     public string bulletin = "";
     public string strtitle = "";
     IProduct product = null;
+    IUser usernew = AS.GroupOn.App.Store.CreateUser();
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
+        using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
+        {
+            usernew = session.Users.GetByID(PageValue.CurrentAdmin.Id);
+        }
         //_system = sysmodel.GetSystem();
         if (Request.HttpMethod == "POST")
         {
@@ -65,7 +70,7 @@
         CategoryFilter cateft = new CategoryFilter();
         IList<ICategory> catelist = null;
         cateft.Zone = "brand";
-        cateft.City_pid = AsAdmin.City_id;
+        cateft.City_pid = usernew.City_id;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             catelist = session.Category.GetList(cateft);
@@ -89,7 +94,7 @@
        
         shanghu.Items.Add(li1);
         pate.AddSortOrder(PartnerFilter.ID_DESC);
-        pate.City_id = AsAdmin.City_id;
+        pate.City_id = usernew.City_id;
         using (IDataSession session = AS.GroupOn.App.Store.OpenSession(false))
         {
             partnerlist = session.Partners.GetList(pate);
